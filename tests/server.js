@@ -1,10 +1,11 @@
 
 // import
 import _ from 'lodash';
-import { MockServer, collection, model } from './mock';
+import Server from '../src/index.js';
+import { collection, model } from '../src/index.js';
 
 // database
-class App extends MockServer {
+class App extends Server {
 
   data() {
     return {

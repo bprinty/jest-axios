@@ -1,95 +1,48 @@
-// const { sidebarTree } = require('../api/config');
-
 module.exports = {
-  base: '/atgtag/vuex-reflect/',
+  base: '/jest-axios/',
   locales: {
     '/': {
       lang: 'en-US',
-      title: 'Vuex Reflect',
-      description: 'Vuex database reflection and orm.'
+      title: 'Jest Axios',
+      description: 'Axios request mocking for REST API testing.'
     }
   },
-  plugins: {
-    '@vuepress/pwa': {
-      serviceWorker: true,
-      updatePopup: {
-        '/': {
-          message: "New content is available.",
-          buttonText: "Refresh"
-        }
-      }
-    }
-  },
-  theme: '@vuepress/theme-vue',
+  theme: '@vuepress/theme-default',
+  plugins: [
+    // 'autodoc'
+    require('../../../vuepress-plugin-autodoc/dist/index.cjs.js')
+  ],
   themeConfig: {
-    repo: 'bprinty/vuex-reflect',
+    repo: 'bprinty/jest-axios',
     docsDir: 'docs',
     docsBranch: 'master',
     editLinks: true,
-    sidebarDepth: 3,
+    displayAllHeaders: true,
+    sidebarDepth: 1,
     locales: {
       '/': {
         label: 'English',
         selectText: 'Languages',
         lastUpdated: 'Last Updated',
         editLinkText: 'Edit this page on GitHub',
-        // nav: [
-        //   {
-        //     text: 'API',
-        //     link: '/api/'
-        //   },
-        // ],
         sidebar: {
           '/': [
             {
-              title: 'Overview ',
-              path: '/',
-              collapsable: false,
-            },
-            {
               title: 'Setup',
+              path: '/setup/',
               collapsable: false,
-              children: [
-                '/guide/setup/install',
-                '/guide/setup/configure',
-              ],
             },
             {
-              title: 'Models',
+              title: 'Guide',
+              path: '/guide/',
               collapsable: false,
-              children: [
-                '/guide/models/overview',
-                '/guide/models/api',
-                '/guide/models/properties',
-                '/guide/models/relationships',
-                '/guide/models/querying',
-                '/guide/models/customization',
-                '/guide/models/singleton',
-              ],
             },
             {
-              title: 'Store',
-              collapsable: false,
-              children: [
-                '/guide/store/overview',
-                '/guide/store/api',
-                '/guide/store/contract',
-                '/guide/store/relationships',
-                '/guide/store/querying',
-                '/guide/store/singleton',
-                '/guide/store/debugging',
-              ],
-            },
-            // {
-            //   title: 'Examples',
-            //   collapsable: false,
-            //   children: [
-            //     '/guide/examples/todo',
-            //     '/guide/examples/blog',
-            //   ],
-            // },
-          ],
-          // '/api/': sidebarTree()['/api/']
+              title: 'API',
+              path: '/api/',
+              collapsable: true,
+            }
+          ]
         }
       }
     }

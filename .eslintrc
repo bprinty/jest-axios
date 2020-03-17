@@ -1,19 +1,36 @@
 {
-    "env": {
-        "browser": true,
-        "es6": true
-    },
-    "extends": [
-        "airbnb-base"
-    ],
-    "globals": {
-        "Atomics": "readonly",
-        "SharedArrayBuffer": "readonly"
-    },
-    "parserOptions": {
-        "ecmaVersion": 2018,
-        "sourceType": "module"
-    },
-    "rules": {
-    }
+  "root": true,
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "airbnb-base"
+  ],
+  "rules": {
+    "no-console": "off",
+    "no-debugger": "off",
+    "indent": "off",
+    "no-useless-escape": "off",
+    "no-plusplus": "off",
+    "operator-linebreak": "off",
+    "no-throw-literal": "off",
+    "prefer-destructuring": "off",
+    "no-param-reassign": "off",
+    "no-shadow": "off",
+    "new-cap": "off",
+    "no-underscore-dangle": "off",
+    "no-template-curly-in-string": "off",
+    "no-restricted-globals": "off",
+    "class-methods-use-this": "off",
+    "max-len": ["error", 150, 2, {
+      "ignoreUrls": true,
+      "ignoreComments": false,
+      "ignoreRegExpLiterals": true,
+      "ignoreStrings": false,
+      "ignoreTemplateLiterals": false
+    }]
+  },
+  parserOptions: {
+    parser: "babel-eslint"
+  }
 }

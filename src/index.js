@@ -32,6 +32,23 @@ function normalize(url) {
   return { id, endpoint };
 }
 
+function format(obj) {
+  const data = {};
+  _.map(obj, (value, key) => {
+    if (_.isFunction(value)) {
+      data[key] = value(obj);
+    } else {
+      data[key] = value;
+    }
+  });
+  return data;
+}
+
+
+_.isError = (data) => {
+  return _.isObject(result) && _.has(result, 'status') && _.has(result, 'message') && result.status >= 400;
+}
+
 
 // classes
 // -------
@@ -61,10 +78,11 @@ export class Server {
       } else {
         this.db[key] = val;
       }
+
+      // TODO: CREATE PROXY FOR DATABASE CLOJURE TO ALLOW THIS.DB.MODEL.GET(ID)
     });
 
     this._api = this.api();
-    this._relationships = this.relationships();
   }
 
   /**
@@ -75,40 +93,57 @@ export class Server {
    * @param {integer} id - Model key/identifier.
    */
   get(model, id) {
-    const data = _.clone(this.db[model][id]);
-
-    // nest related data based on relationships spec
-    if (_.has(this._relationships, model)) {
-      const mapping = _.isArray(this._relationships[model]) ? this._relationships[model] : [this._relationships[model]];
-      mapping.forEach((spec) => {
-        const collection = _.isString(spec.collection) ? this.db[spec.collection] : spec.collection;
-        data[spec.to] = collection[data[spec.from]];
-        delete data[spec.from];
-      });
+    if (id === undefined) {
+      return _.map(_.values(this.db[model]), format);
+    } else {
+      return format(this.db[model][id]);
     }
-
-    return data;
   }
 
   /**
    * Generate default request processors for collection
    * endpoints, overriding the `get` and `post` handlers.
    *
-   * @param {object} table - MockServer database table to
-   *     generate urls for.
-   * @param {object} relationships - Relationships to other
-   *     models. Takes the form {id_key: this.db.relatedModel}
+   * @param {string} model - Database model.
+   * @param {array} exclude - Model keys to exclude from response payload.
+   * @param {array} include - Model keys to include in response payload.
+   * @param {string} key - foreign key to parent resource.
    */
-  collection(name) {
+  collection(options) {
+    if (_.isString(options)) {
+      options = { model: options };
+    }
+    const model = options.model;
     return {
-      get: () => Object.keys(this.db[name]).map(id => this.get(name, id)),
+      get: () => Object.keys(this.db[model]).map(id => this.get(model, id)),
       post: (data) => {
-        const id = Number(_.max(Object.keys(this.db[name]))) + 1;
+        const id = Number(_.max(Object.keys(this.db[model]))) + 1;
         data.id = id;
-        this.db[name][id] = data;
-        return this.get(name, id);
+        this.db[model][id] = data;
+        return this.get(model, id);
       },
     };
+
+    // {
+    //   get: (id) => {
+    //     const records = Object.keys(this.db.records).map(id => this.db.records[id]);
+    //     return records.filter(x => x.post_id === id);
+    //   },
+    //   post: (id, data) => {
+    //     // TODO: THINK AB OUT CLOJURE SYNTAX WHEN ABSTRACTING
+    //     //       INTO NEW PACKAGE
+    //     // this.db.records.get(id);
+    //     // this.db.records.add(data);
+    //     // this.db.records.update(id, data);
+    //     // this.db.records.remove(id);
+    //     data.id = Number(_.max(Object.keys(this.db.records))) + 1;
+    //     data.post_id = id;
+    //     this.db.records[data.id] = data;
+    //     const records = Object.keys(this.db.records).map(key => this.db.records[key]);
+    //     return records.filter(x => x.post_id === id);
+    //   },
+    // },
+
   }
 
   /**
@@ -116,23 +151,50 @@ export class Server {
    * endpoints, overriding the `get`, `put`, and `delete`
    * handlers.
    *
-   * @param {object} table - MockServer database table to
-   *     generate urls for.
+   * @param {string} model - Database model.
+   * @param {array} exclude - Model keys to exclude from response payload.
+   * @param {array} include - Model keys to include in response payload.
+   * @param {string} key - foreign key to child resource.
    */
-  model(name) {
+  model(options) {
+    if (_.isString(options)) {
+      options = { model: options };
+    }
+    const model = options.model;
     return {
-      get: id => this.get(name, id),
-      put: (id, payload) => {
-        const keys = Object.keys(this.db[name][id]);
-        this.db[name][id] = Object.assign(this.db[name][id], _.pick(payload, keys));
-        return this.get(name, id);
+      get: id => this.get(model, id),
+      put: (id, data) => {
+        const keys = Object.keys(this.db[model][id]);
+        this.db[model][id] = Object.assign(this.db[model][id], _.pick(data, keys));
+        return this.get(model, id);
       },
       delete: (id) => {
-        delete this.db[name][id];
+        delete this.db[model][id];
       },
     };
   }
 
+  /**
+   * Generate default request processors for singleton model
+   * endpoints, overridding the `get`, `put`, and `delete`
+   * handlers.
+   *
+   * @param {object} model - Database model.
+   */
+  singleton(options) {
+    if (_.isString(options)) {
+      options = { model: options };
+    }
+    const model = options.model;
+    return {
+      get: () => this.db[model],
+      put: (data) => {
+        this.db[model] = Object.assign(this.db[model], data);
+        return this.db[model];
+      },
+      delete: () => this.reset(model),
+    };
+  }
 
   /**
    * Method for defining internal database that will
@@ -154,10 +216,24 @@ export class Server {
 
   /**
    * Reset internal database for server mock to original state.
+   *
+   * @param {object} model - Database model to reset.
    */
-  reset() {
+  reset(model) {
     let obj = new this.constructor();
-    this.db = obj.db;
+
+    // reset everything
+    if (model === undefined) {
+      this.db = obj.db;
+
+    // reset specific model
+    } else if (model in obj.db) {
+      this.db[model] = obj.db[model];
+
+    // handle invalid input
+    } else {
+      throw new Error(`Specified model \`${model}\` not in mock server database.`);
+    }
     obj = null;
   }
 
@@ -289,7 +365,7 @@ export class Server {
           reject(NotFound(url));
         }
 
-        // call method
+        // resolve response
         resolve({
           status: 204,
           data: this._api[endpoint].delete(Number(id)),

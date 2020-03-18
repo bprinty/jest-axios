@@ -1,13 +1,16 @@
 
 // import
-import _ from 'lodash';
-import Server from '../src/index.js';
-import { collection, model } from '../src/index.js';
+import { Server } from '../src/index';
+import { ServerError, Forbidden } from '../src/errors';
 
 // database
 class App extends Server {
-
+  /**
+   * Default data for server mock.
+   */
   data() {
+    const getAuthor = post => this.get('authors', post.author_id);
+    const getComments = post => this.get('comments').filter(x => x.post_id === post.id);
     return {
       profile: {
         username: 'admin',
@@ -15,21 +18,20 @@ class App extends Server {
       posts: [
         {
           title: 'Foo',
-          body: 'foo bar baz',
-          hits: 100,
+          body: 'foo bar',
           author_id: 1,
-          archived: false,
+          author: getAuthor,
+          comments: getComments,
         },
         {
           title: 'Bar',
           body: 'bar baz',
-          hits: 200,
           author_id: 1,
-          history: [],
-          archived: true,
+          author: getAuthor,
+          comments: getComments,
         },
       ],
-      records: [
+      history: [
         { delta: 'foo', post_id: 1 },
         { delta: 'bar', post_id: 1 },
       ],
@@ -37,70 +39,63 @@ class App extends Server {
         { name: 'Jane Doe', email: 'jane@doe.com' },
         { name: 'John Doe', email: 'john@doe.com' },
       ],
+      comments: [
+        { user: 'jack', body: 'foo comment', post_id: 1 },
+        { user: 'jill', body: 'bar comment', post_id: 1 },
+      ],
     };
-  }
-
-  relationships() {
-    return {
-      posts: {
-        from: 'author_id',
-        to: 'author',
-        collection: 'authors',
-      }
-    }
   }
 
   api() {
     return {
-      '/profile': {
-        get: () => this.db.profile,
-        put: (data) => {
-          this.db.profile = Object.assign(this.db.profile, data);
-          return this.db.profile;
-        },
-        delete: () => {
-          this.db.profile = { username: 'admin' };
-        },
-      },
-      '/posts': this.collection('posts'),
-      '/posts/:id': this.model('posts'),
-      '/posts/:id/history': {
-        get: (id) => {
-          const records = Object.keys(this.db.records).map(id => this.db.records[id]);
-          return records.filter(x => x.post_id === id);
-        },
-        post: (id, data) => {
-          // TODO: THINK AB OUT CLOJURE SYNTAX WHEN ABSTRACTING
-          //       INTO NEW PACKAGE
-          // this.db.records.get(id);
-          // this.db.records.add(data);
-          // this.db.records.update(id, data);
-          // this.db.records.remove(id);
-          data.id = Number(_.max(Object.keys(this.db.records))) + 1;
-          data.post_id = id;
-          this.db.records[data.id] = data;
-          const records = Object.keys(this.db.records).map(key => this.db.records[key]);
-          return records.filter(x => x.post_id === id);
-        },
-      },
+      // profile
+      '/profile': this.singleton({ model: 'profile' }),
+
+      // posts
+      '/posts': this.collection({
+        model: 'posts',
+        exclude: ['author', 'comments'],
+      }),
+      '/posts/:id': this.model({
+        model: 'posts',
+        exclude: ['author_id'],
+      }),
+      '/posts/:id/author': this.model({
+        model: 'authors',
+        key: 'author_id',
+      }),
+      '/posts/:id/history': this.collection({
+        model: 'history',
+        key: 'post_id',
+      }),
       '/posts/:id/archive': {
         post: (id) => {
           this.db.posts[id].archived = true;
-          return this.db.posts[id];
+          return this.get('posts', id);
         },
       },
-      '/posts/:id/author': {
-        get: id => this.db.authors[this.db.posts[id].author_id],
-      },
+
+      // authors
       '/authors': this.collection('authors'),
       '/authors/:id': this.model('authors'),
-      '/authors/:id/posts': {
-        get: id => {
-          const posts = Object.keys(this.db.posts).map(id => this.db.posts[id]);
-          return posts.filter(x => x.author_id === id);
+      '/authors/:id/posts': this.collection({
+        model: 'posts',
+        key: 'author_id',
+        exclude: ['author', 'comments'],
+      }),
+
+      // errors
+      '/errors/server': {
+        get: () => {
+          throw new ServerError()
         },
       },
-    }
+      '/errors/forbidden': {
+        get: () => {
+          throw new Forbidden()
+        },
+      }
+    };
   }
 }
 

@@ -15,7 +15,7 @@ For additional context on how to use this module during testing, see the [Quicks
 
 ## Mocking Endpoints
 
-The core feature of this package is the ability to mock endpoint requests for testing.
+The main feature provided by this package is the *ability to mock REST endpoints*. For that goal, we can easily define functions to mock specific rest endpoints by extending the `Server` class provided with this package. To set up an API mock that will automatically return fake data during `axios` requests made by your project, first extend the `Server` class and define functions for the various request types:
 
 ::: warning Note
 
@@ -24,6 +24,7 @@ The example immediately below is meant to be illustrative, not suggestive. See t
 :::
 
 ```javascript
+// contents of tests/server.js
 import { Server } from 'jest-axios';
 
 class App extends Server {
@@ -47,9 +48,11 @@ class App extends Server {
     };
   }
 }
+
+export default App('posts-app');
 ```
 
-And once these endpoints are defined, any axios call issuing `GET` requests for those endpoints will return the data specified in the code above:
+Once these endpoints are defined, any axios call issuing `GET` requests for those endpoints will return the data specified in the code above:
 
 ```javascript
 await axios.get('/posts');
@@ -67,11 +70,45 @@ await axios.get('/posts/1');
 */
 ```
 
-However, this can become messy if you're trying to mock many data models with many model instances. To simplify the process of mocking these requests with data, we can define `data()` configuration that will set up a database that can be referenced in request methods.
+For example, here is a full `jest` test file that uses the `posts-app` mock above during testing:
+
+```javascript
+import axios from 'axios';
+import server from './server';
+
+jest.mock('axios');
+server.init();
+
+test('posts test', async () => {
+
+  // issue request
+  const response = await axios.get('/posts');
+
+  // check status code
+  assert.equal(response.status, 200);
+
+  // check payload
+  assert.equal(response.data, [
+    { id: 1, title: 'Foo', body: 'foo bar' },
+    { id: 2, title: 'Bar', body: 'bar baz' },
+  ]);
+
+});
+```
+
+If you make a bad request (for an endpoint that isn't mocked by this library), you'll receive an appropriate response code:
+
+```javascript
+axios.get('/missing-endpoint').catch(err => {
+  // err will have `status` and `message` data.
+});
+```
+
+That covers the basics of the core functionality provided by this module, but defining singular endpoints like this can become messy if you're trying to mock many data models with many model instances. To simplify the process of mocking these requests with data, we can define `data()` configuration that will allow us to access a database of stored data when resolving requests.
 
 ## Mocking Data Models
 
-This section will cover high-level ideas around how data models are defined in this library, and common tools/patterns you can use to mock certain functionality during testing. As a start, let's show a definition for a simple mock server that hosts a simple collection called `posts`:
+When testing applications, we often need to pull data for specific data models and collections of those models from an API. To showcase a mock server that fakes this type of data, let's configure a simple mock server that hosts a simple collection called `posts`:
 
 ```javascript
 import { Server } from 'jest-axios';
@@ -96,79 +133,60 @@ class App extends Server {
 }
 ```
 
+::: tip
+
+Whenever an `:id` parameter is embedded within a URL, an the url will automatically be parsed for the `id` parameter and the `id` parameter will become the first argument to the endpoint callable.
+
+:::
+
 With this simple configuration, axios will behave accordingly as the following requests are made:
 
 ```javascript
-jest.mock('axios');
-server.init()
+// get collection of posts
+await axios.get('/posts');
+/*
+[
+  { id: 1, title: 'Foo', body: 'foo bar' },
+  { id: 2, title: 'Bar', body: 'bar baz' },
+]
+*/
 
-async get(url) {
-  return axios.get(url);
-}
+// create new post
+await axios.post('/posts', { title: 'Baz', body: 'baz' });
+/*
+{ id: 3, title: 'Baz', body: 'baz' }
+*/
 
-async post(url, data) {
-  return axios.post(url, data);
-}
+// get new post
+await axios.get('/posts/3');
+/*
+{ id: 3, title: 'Baz', body: 'baz' }
+*/
 
-async put(url, data) {
-  return axios.put(url, data);
-}
+// update new post
+await axios.put('/posts/3', { title: 'BazBaz' });
+/*
+{ id: 3, title: 'BazBaz', body: 'baz' }
+*/
 
-async delete(url) {
-  return axios.delete(url);
-}
-
-
-test('example', async () => {  
-  let response;
-
-  // get collection of posts
-  // response = await axios.get('/posts');
-  assert.equal(
-    get('/posts'),
-    [
-      { id: 1, title: 'Foo', body: 'foo bar' },
-      { id: 2, title: 'Bar', body: 'bar baz' },
-    ]
-  );
-
-  // create new post
-  await axios.post('/posts', { title: 'Baz', body: 'baz' });
-  /*
-  { id: 3, title: 'Baz', body: 'baz' }
-  */
-
-  // get new post
+// delete new post and check if it exists
+await axios.delete('/posts/3');
+try {
   await axios.get('/posts/3');
-  /*
-  { id: 3, title: 'Baz', body: 'baz' }
-  */
-
-  // update new post
-  await axios.put('/posts/3', { title: 'BazBaz' });
-  /*
-  { id: 3, title: 'BazBaz', body: 'baz' }
-  */
-
-  // delete new post and check if it exists
-  await axios.delete('/posts/3');
-  try {
-    await axios.get('/posts/3');
-  } catch (err) {
-    console.log(err);
-  }
-  /*
-  {
+} catch (err) {
+  console.log(err);
+}
+/*
+{
   status: 402,
   message: 'Could not find resource `3`'
-  }
-  */
-})
+}
+*/
 ```
 
 ## Mocking Endpoint Actions
 
-Now that we've highlighted the basic functionality, let's add some custom endpoints for performing actions on data. In this example, we want to include a nested `/posts/:id/archive` endpoint for setting an `archive` flag on `post` objects. To do so, we can update our `api()` definition like so:
+Now that we've highlighted basic model CRUD functionality, let's add some custom endpoints for performing actions on data. In this example, we want to include a nested `/posts/:id/archive` endpoint for setting an `archive` flag on `post` objects. To do so, we can update our `api()` definition like so:
 
 ```javascript
 api() {
@@ -184,12 +202,6 @@ api() {
   };
 }
 ```
-
-::: tip
-
-Whenever an `:id` parameter is embedded within a URL, an the url will automatically be parsed for the `id` parameter and the `id` parameter will become the first argument to the endpoint callable.
-
-:::
 
 With this defined, any `/posts/:id/archive` call will automatically be mocked:
 
@@ -209,7 +221,7 @@ await axios.get('/posts/1');
 
 ## Mocking Model Relations
 
-You can similarly use this pattern to automatically mock nested relation fetching. Let's say we want to track `authors` and `comments` related to a specific post. In this scenario, `posts` have a single author and multiple `comments`. To represent those relationships when defining data, you can use the following definitions:
+You can similarly use this pattern to automatically mock fetching nested resources. Let's say we want to track `authors` and `comments` related to a specific post. In this scenario, `posts` have a single author and multiple `comments`. To represent those relationships when defining data, you can use the following definitions:
 
 ```javascript
 import { Server } from 'jest-axios';
@@ -238,15 +250,16 @@ class App extends Server {
     return {
       '/posts': this.collection('posts'),
       '/posts/:id': this.model('posts'),
-      // TODO: WORK THROUGH THIS API
-      '/posts/:id/authors': this.model('authors').from('author_id'),
-      '/posts/:id/comments': this.collection('comments').from('post_id'),
+      '/posts/:id/authors': this.model('authors', { key: 'author_id' }),
+      '/posts/:id/comments': this.collection('comments', { key: 'post_id' }),
     };
   }
 }
 ```
 
-Or, for clarity, here is how you could configure the relations manually:
+In the example above, the `collection` and `model` factory methods take an option object. For the `model` factory method, the `key` option represents a foreign key **on the requested resource** to the specified model. For the `collection` factory method, the `key` option represents a foreign key **on the related collection** that is linked to the requested resource's `id`.
+
+If the syntax above for configuring nested resource fetching is confusing, you can configure the relations manually (above is shorthand for configuring a common pattern). For clarity, here is how you could configure the relations manually:
 
 ```javascript
 api() {
@@ -364,7 +377,7 @@ await axios.get('/posts/1');
 
 ## Singleton Models
 
-It's often useful to have a data model that represents singleton data instead of collection data. A common example of this is providing profile data to the currently logged-in user via a `/profile` endpoint contextualized to return information for the current user.
+Alongside Models and Collections, it's often useful to have a data model that represents singleton data instead of collection data. A common example of this is providing profile data to the currently logged-in user via a `/profile` endpoint contextualized to return information for the current user.
 
 Since we don't need to define a relational schema to represent users in our database (we're just concerned with actions of a single user), we can represent the profile data as a `singleton` model. Here is an example config with data and endpoint actions for a `/profile` singleton model:
 
@@ -384,21 +397,31 @@ class App extends Server {
 
   api() {
     return {
-      '/profile': {
-        get: () => this.db.profile,
-        put: (data) => {
-          this.db.profile = Object.assign(this.db.profile, data);
-          return this.db.profile;
-        },
-        delete: () => {
-          this.reset('profile')
-        },
-      },
+      '/profile': self.singleton('profile'),
     };
   }
 }
 
 export default App('profile');
+```
+
+For clarity, here is equivalent configuration for the `api()` block above:
+
+```javascript
+api() {
+  return {
+    '/profile': {
+      get: () => this.db.profile,
+      put: (data) => {
+        this.db.profile = Object.assign(this.db.profile, data);
+        return this.db.profile;
+      },
+      delete: () => {
+        this.reset('profile')
+      },
+    },
+  };
+}
 ```
 
 With the endpoint configuration above, axios requests will return an object for the endpoint instead of a collection:
@@ -438,27 +461,35 @@ Additionally, you can see that mocking functions are always re-evaluated when ne
 
 ## Server Utilities
 
-This section covers various utilities available for `Server` objects instantiated during testing.
-
-### Init
-
-Before
-
-
-### Reset
-
-You can also reset data to the initial
-
-### Dump
-
-To dump a testing database (i.e. get an object with all of the data), you can use:
+There are several utilities that can be used during testing. First, to reset a database between sessions, you can use the `server.reset()` function:
 
 ```javascript
-server.json()
+jest.mock('axios');
+server.init();
+beforeEach(() => {
+  server.reset();
+});
 ```
 
-This will output data in the format:
+This will reset the database down to it's initial state (with data configured in the `data()` block). To clear the database completely during testing, use the `server.clear()` function:
 
-```json
-
+```javascript
+jest.mock('axios');
+server.init();
+beforeAll(() => {
+  server.clear();
+});
 ```
+
+Finally, to access the state of a database during or after testing, use the `server.db` property:
+
+```javascript
+jest.mock('axios');
+server.init();
+afterAll(() => {
+  console.log('Printing Database!');
+  console.log(server.db);
+});
+```
+
+If you have any questions that aren't answered by this documentation, feel free to file a `documentation` issue in the [GitHub Issue Tracker](https://github.com/bprinty/jest-axios) for this project.

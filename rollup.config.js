@@ -1,7 +1,6 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import babel from 'rollup-plugin-babel';
-import sass from 'rollup-plugin-sass';
 import json from '@rollup/plugin-json';
 import { terser } from 'rollup-plugin-terser';
 
@@ -32,9 +31,6 @@ export default [
       resolve(),
       json(),
       commonjs(),
-      sass({
-        output: 'dist/index.css',
-      }),
       babel({
         exclude: 'node_modules/**',
       }),

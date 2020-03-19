@@ -10,8 +10,11 @@ import _ from 'lodash';
 
 // helpers
 // -------
-function format(obj) {
-  const data = {};
+function format(obj, id) {
+  const data = Boolean(id) ? { id } : {};
+  if (!_.isNaN(Number(data.id))) {
+    data.id = Number(data.id);
+  }
   _.map(obj, (value, key) => {
     if (_.isFunction(value)) {
       data[key] = value(obj);
@@ -29,9 +32,29 @@ function format(obj) {
  * Abstract model class for databases.
  */
 class Model {
-  json() {
-    return this.data;
+
+  /**
+   * Get all records from model.
+   */
+  all() {
+    throw new Error('`all()` method must be overridden by extensions of `Model` class.')
   }
+
+  /**
+   * Return json data structure with all data in model.
+   */
+  json() {
+    return this.all();
+  }
+
+  /**
+   * Reset database to initial state.
+   */
+  reset() {
+    this.data = _.clone(this.backup);
+    this.head = this.backupIndex;
+  }
+
 }
 
 /*
@@ -62,12 +85,18 @@ export class Collection extends Model {
       this.head = this.index(this.head);
       this.data[this.head] = value;
     });
+    this.backupIndex = this.head;
+    this.backup = _.clone(data);
 
     return new Proxy(this, {
       get: (obj, prop) => {
         return (prop in obj.data) ? { id: prop, ...obj.data[prop] } : obj[prop];
       },
       set: (obj, prop, value) => {
+        if (prop === 'head') {
+          obj.head = value;
+          return true;
+        }
         if (!_.isObject(value)) {
           throw new Error('New collection record must be `Object` type.');
         }
@@ -78,9 +107,11 @@ export class Collection extends Model {
           obj.head = prop;
           obj.data[prop] = data;
         }
+        return true;
       },
       deleteProperty: (obj, prop) => {
         delete obj.data[prop];
+        return true;
       },
     });
   }
@@ -91,7 +122,10 @@ export class Collection extends Model {
    * @param {number} id - Identifier for model to get from database.
    */
   get(id) {
-    return format(this.data[id]);
+    if (!(id in this.data)) {
+      return;
+    }
+    return format(this.data[id], id);
   }
 
   /**
@@ -109,16 +143,46 @@ export class Collection extends Model {
   add(data) {
     this.head = this.index(this.head);
     this.data[this.head] = data;
+    return this.get(this.head);
   }
+
+  /**
+   * Update data for model.
+   */
+  update(id, data) {
+    if(!(id in this.data)) {
+      throw new Error(`Specified id \`${id}\` not in collection.`);
+    }
+    _.map(data, (value, key) => {
+      this.data[id][key] = value;
+    });
+    return this.get(id);
+  }
+
+  /**
+   * Remove record from collection.
+   *
+   * @param {string} id - Identifier for record.
+   */
+   remove(id) {
+     delete this.data[id];
+   }
 }
 
 
-/*
+/**
  * Singleton class for managing singleton objects.
  * This objects provides some proxy methods for interacting
  * with faux databases provided by this package.
  */
 export class Singleton extends Model {
+
+  /**
+   * Create a new Singleton object.
+   *
+   * @param {string} name - Name of model.
+   * @param {array} data - Data to store.
+   */
   constructor(name, data) {
     super();
     this.name = name;
@@ -126,6 +190,7 @@ export class Singleton extends Model {
     if (!_.isObject(data)) {
       throw new Error('Inputs to `Singleton` object must be `Object` type.');
     }
+    this.backup = _.clone(data);
     this.data = data;
 
     return new Proxy(this, {
@@ -139,17 +204,36 @@ export class Singleton extends Model {
       },
       set: (obj, prop, value) => {
         obj.data[prop] = value;
+        return true;
       },
       deleteProperty: (obj, prop) => {
         delete obj.data[prop];
+        return true;
       },
     });
+  }
+
+  /**
+   * Update data for model.
+   */
+  update(data) {
+    _.map(data, (value, key) => {
+      this.data[key] = value;
+    });
+    return this.json();
   }
 
   /**
    * Get formatted collection results.
    */
   get() {
+    return format(this.data);
+  }
+
+  /**
+   * Get formatted collection results.
+   */
+  all() {
     return format(this.data);
   }
 }

@@ -27,7 +27,7 @@ function normalize(url) {
   const re = /\/(\d+)/;
   const matches = url.match(re);
   if (matches !== null) {
-    id = matches[1];
+    id = _.cast(matches[1]);
     endpoint = url.replace(re, '/:id');
   }
   return { id, endpoint };
@@ -35,7 +35,14 @@ function normalize(url) {
 
 _.isError = (data) => {
   return _.isObject(result) && _.has(result, 'status') && _.has(result, 'message') && result.status >= 400;
-}
+};
+
+_.cast = (id) => {
+  if (!_.isNaN(Number(id))) {
+    id = Number(id);
+  }
+  return id;
+};
 
 
 // classes
@@ -91,17 +98,36 @@ export class Server {
    *
    * @param {string} model - Database model.
    * @param {array} exclude - Model keys to exclude from response payload.
-   * @param {array} include - Model keys to include in response payload.
-   * @param {string} key - foreign key to parent resource.
+   * @param {string} relation - Relation to subset queries by.
+   * @param {string} key - Foreign key on relation linking model and relation.
    */
   collection(options) {
     if (_.isString(options)) {
       options = { model: options };
     }
-    const model = options.model;
+    const exclude = options.exclude || [];
+    const { model, relation, key } = options;
     return {
-      get: () => this.db[model].all(),
-      post: data => this.db[model].add(data),
+      get: (id) => {
+        let data = _.map(this.db[model].all(), item => _.omit(item, exclude));
+        if (id && relation && key) {
+          data = data.filter(item => item[key] === id);
+        }
+        return data;
+      },
+      post: (data, id) => {
+        process = (item) => {
+          if (id && relation && key) {
+            item[key] = id;
+          }
+          return _.omit(this.db[model].add(item), exclude);
+        }
+        if (_.isArray(data)) {
+          return data.map(item => process(item));
+        } else {
+          return process(data);
+        }
+      },
     };
   }
 
@@ -112,22 +138,59 @@ export class Server {
    *
    * @param {string} model - Database model.
    * @param {array} exclude - Model keys to exclude from response payload.
-   * @param {array} include - Model keys to include in response payload.
-   * @param {string} key - foreign key to child resource.
+   * @param {string} relation - Relation to subset queries by.
+   * @param {string} key - Foreign key on model linking model and relation.
    */
   model(options) {
     if (_.isString(options)) {
       options = { model: options };
     }
-    const model = options.model;
+    const exclude = options.exclude || [];
+    const { model, relation, key } = options;
     return {
-      get: id => this.db[model].get(id),
-      put: (id, data) => {
-        this.db[model][id] = data;
-        return this.db[model].get(id);
+      get: id => {
+        // reformat id for relation
+        if (id && relation && key) {
+          if (!(id in this.db[relation].data)) {
+            return undefined;
+          }
+          id = this.db[relation][id][key];
+        }
+
+        // process
+        if(!(id in this.db[model].data)) {
+          return undefined;
+        }
+        return _.omit(this.db[model].get(id), exclude);
+      },
+      put: (data, id) => {
+        // with relation
+        if (id && relation && key) {
+          if (!(id in this.db[relation].data)) {
+            return undefined;
+          }
+          if(!(data.id in this.db[model].data)) {
+            return undefined;
+          }
+          this.db[relation].data[id][key] = data.id;
+          return this.db[model].get(data.id);
+        }
+
+        // without relation
+        if(!(id in this.db[model].data)) {
+          return undefined;
+        }
+        return _.omit(this.db[model].update(id, data), exclude)
       },
       delete: (id) => {
-        delete this.db[model][id];
+        // with relation
+        if (id && relation && key) {
+          this.db[relation].update(id, { [key]: null });
+          return;
+        }
+
+        // without relation
+        return this.db[model].remove(id)
       },
     };
   }
@@ -138,19 +201,18 @@ export class Server {
    * handlers.
    *
    * @param {object} model - Database model.
+   * @param {array} exclude - Model keys to exclude from response payload.
    */
   singleton(options) {
     if (_.isString(options)) {
       options = { model: options };
     }
+    const exclude = options.exclude || [];
     const model = options.model;
     return {
-      get: () => this.db[model],
-      put: (data) => {
-        this.db[model] = Object.assign(this.db[model], data);
-        return this.db[model];
-      },
-      delete: () => this.reset(model),
+      get: () => _.omit(this.db[model].json(), exclude),
+      put: (data) => _.omit(this.db[model].update(data), exclude),
+      delete: () => this.db[model].reset(),
     };
   }
 
@@ -196,6 +258,17 @@ export class Server {
   }
 
   /**
+   * Dump current state of database into json object.
+   */
+  dump() {
+    const result = {};
+    Object.keys(this.db).map(key => {
+      result[key] = this.db[key].json();
+    });
+    return result;
+  }
+
+  /**
    * Initialize server mock and create fake callables for
    * all axios requests. This method should be called before tests
    * run or at the beginning of a test session.
@@ -218,28 +291,15 @@ export class Server {
           reject(NotFound(url));
         }
 
-        // collection request
-        if (id === null) {
-          resolve({
-            status: 200,
-            data: method(),
-          });
-
-        // model request
-        } else {
-          // reject on missing model
-          const result = method(Number(id));
-          if (_.isUndefined(result)) {
-            reject(Missing(id));
-
-          // return model
-          } else {
-            resolve({
-              status: 200,
-              data: result,
-            });
-          }
+        // operate
+        const result = method(id);
+        if (_.isUndefined(result)) {
+          reject(Missing(id));
         }
+        resolve({
+          status: 200,
+          data: result,
+        });
       });
     });
 
@@ -258,20 +318,11 @@ export class Server {
           reject(NotFound(url));
         }
 
-        // collection request
-        if (!id) {
-          resolve({
-            status: 201,
-            data: method(data),
-          });
-
-        // model request
-        } else {
-          resolve({
-            status: 200,
-            data: method(Number(id), data),
-          });
-        }
+        // operate
+        resolve({
+          status: 201,
+          data: method(data, id),
+        });
       });
     });
 
@@ -290,21 +341,11 @@ export class Server {
           reject(NotFound(url));
         }
 
-
-        // model request
-        if (id) {
-          resolve({
-            status: 200,
-            data: method(Number(id), data),
-          });
-
-        // singleton request
-        } else {
-          resolve({
-            status: 200,
-            data: method(data),
-          });
-        }
+        // operate
+        resolve({
+          status: 200,
+          data: method(data, id),
+        });
       });
     });
 
@@ -326,7 +367,7 @@ export class Server {
         // resolve response
         resolve({
           status: 204,
-          data: this._api[endpoint].delete(Number(id)),
+          data: this._api[endpoint].delete(id),
         });
       });
     });

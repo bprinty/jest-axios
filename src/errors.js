@@ -36,7 +36,7 @@ export function NotFound(url) {
 export function Missing(id) {
   return {
     status: 404,
-    message: `Could not find resource \`${id}\``,
+    message: `Could not find either resource \`${id}\` or nested payload for resource.`,
   };
 }
 

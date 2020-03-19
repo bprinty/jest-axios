@@ -8,10 +8,11 @@
 import _ from 'lodash';
 import axios from 'axios';
 
+import { Singleton, Collection } from './models';
 import { NotFound, Missing } from './errors';
 
 
-// parsers
+// helpers
 // -------
 /**
  * Parse :id parameter from url (making the assumption
@@ -32,19 +33,6 @@ function normalize(url) {
   return { id, endpoint };
 }
 
-function format(obj) {
-  const data = {};
-  _.map(obj, (value, key) => {
-    if (_.isFunction(value)) {
-      data[key] = value(obj);
-    } else {
-      data[key] = value;
-    }
-  });
-  return data;
-}
-
-
 _.isError = (data) => {
   return _.isObject(result) && _.has(result, 'status') && _.has(result, 'message') && result.status >= 400;
 }
@@ -60,29 +48,30 @@ _.isError = (data) => {
 export class Server {
   constructor(name) {
     this.name = name || 'mock-server';
+
+    // reformat data spec
     this.db = {};
-
-    // reformat data for internal storage
     _.each(this.data(), (val, key) => {
-      // reduce list into dictionary with indices
       if (_.isArray(val)) {
-        let idx = 1;
-        this.db[key] = val.reduce((obj, item) => {
-          item.id = idx;
-          obj[idx] = item;
-          idx += 1;
-          return obj;
-        }, {});
-
-      // store singleton data
+        this.db[key] = new Collection(key, val, this.constructor.index);
       } else {
-        this.db[key] = val;
+        this.db[key] = new Singleton(key, val);
       }
-
-      // TODO: CREATE PROXY FOR DATABASE CLOJURE TO ALLOW THIS.DB.MODEL.GET(ID)
     });
 
+    // instantiate api contract
     this._api = this.api();
+  }
+
+  /**
+   * Function for returning index of new item in server. Can
+   * be overridden to use UUID indexes.
+   *
+   * @param {integer} max - Current max index in table.
+   */
+  static index(max) {
+    max = max || 0;
+    return max + 1;
   }
 
   /**
@@ -93,11 +82,7 @@ export class Server {
    * @param {integer} id - Model key/identifier.
    */
   get(model, id) {
-    if (id === undefined) {
-      return _.map(_.values(this.db[model]), format);
-    } else {
-      return format(this.db[model][id]);
-    }
+    return this.db[model].get(id);
   }
 
   /**
@@ -115,35 +100,9 @@ export class Server {
     }
     const model = options.model;
     return {
-      get: () => Object.keys(this.db[model]).map(id => this.get(model, id)),
-      post: (data) => {
-        const id = Number(_.max(Object.keys(this.db[model]))) + 1;
-        data.id = id;
-        this.db[model][id] = data;
-        return this.get(model, id);
-      },
+      get: () => this.db[model].all(),
+      post: data => this.db[model].add(data),
     };
-
-    // {
-    //   get: (id) => {
-    //     const records = Object.keys(this.db.records).map(id => this.db.records[id]);
-    //     return records.filter(x => x.post_id === id);
-    //   },
-    //   post: (id, data) => {
-    //     // TODO: THINK AB OUT CLOJURE SYNTAX WHEN ABSTRACTING
-    //     //       INTO NEW PACKAGE
-    //     // this.db.records.get(id);
-    //     // this.db.records.add(data);
-    //     // this.db.records.update(id, data);
-    //     // this.db.records.remove(id);
-    //     data.id = Number(_.max(Object.keys(this.db.records))) + 1;
-    //     data.post_id = id;
-    //     this.db.records[data.id] = data;
-    //     const records = Object.keys(this.db.records).map(key => this.db.records[key]);
-    //     return records.filter(x => x.post_id === id);
-    //   },
-    // },
-
   }
 
   /**
@@ -162,11 +121,10 @@ export class Server {
     }
     const model = options.model;
     return {
-      get: id => this.get(model, id),
+      get: id => this.db[model].get(id),
       put: (id, data) => {
-        const keys = Object.keys(this.db[model][id]);
-        this.db[model][id] = Object.assign(this.db[model][id], _.pick(data, keys));
-        return this.get(model, id);
+        this.db[model][id] = data;
+        return this.db[model].get(id);
       },
       delete: (id) => {
         delete this.db[model][id];

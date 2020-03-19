@@ -11,7 +11,7 @@ import _ from 'lodash';
 // helpers
 // -------
 function format(obj, id) {
-  const data = Boolean(id) ? { id } : {};
+  const data = id ? { id } : {};
   if (!_.isNaN(Number(data.id))) {
     data.id = Number(data.id);
   }
@@ -32,12 +32,11 @@ function format(obj, id) {
  * Abstract model class for databases.
  */
 class Model {
-
   /**
    * Get all records from model.
    */
   all() {
-    throw new Error('`all()` method must be overridden by extensions of `Model` class.')
+    throw new Error('`all()` method must be overridden by extensions of `Model` class.');
   }
 
   /**
@@ -54,7 +53,6 @@ class Model {
     this.data = _.clone(this.backup);
     this.head = this.backupIndex;
   }
-
 }
 
 /*
@@ -63,7 +61,6 @@ class Model {
  * with faux databases provided by this package.
  */
 export class Collection extends Model {
-
   /**
    * Create a new Collection.
    *
@@ -81,17 +78,16 @@ export class Collection extends Model {
       throw new Error('Inputs to `Collection` object must be `Array` type.');
     }
     this.head = 0;
-    data.map(value => {
+    data.map((value) => {
       this.head = this.index(this.head);
       this.data[this.head] = value;
+      return value;
     });
     this.backupIndex = this.head;
     this.backup = _.clone(data);
 
     return new Proxy(this, {
-      get: (obj, prop) => {
-        return (prop in obj.data) ? { id: prop, ...obj.data[prop] } : obj[prop];
-      },
+      get: (obj, prop) => ((prop in obj.data) ? { id: prop, ...obj.data[prop] } : obj[prop]),
       set: (obj, prop, value) => {
         if (prop === 'head') {
           obj.head = value;
@@ -123,7 +119,7 @@ export class Collection extends Model {
    */
   get(id) {
     if (!(id in this.data)) {
-      return;
+      return undefined;
     }
     return format(this.data[id], id);
   }
@@ -150,7 +146,7 @@ export class Collection extends Model {
    * Update data for model.
    */
   update(id, data) {
-    if(!(id in this.data)) {
+    if (!(id in this.data)) {
       throw new Error(`Specified id \`${id}\` not in collection.`);
     }
     _.map(data, (value, key) => {
@@ -176,7 +172,6 @@ export class Collection extends Model {
  * with faux databases provided by this package.
  */
 export class Singleton extends Model {
-
   /**
    * Create a new Singleton object.
    *
@@ -198,9 +193,8 @@ export class Singleton extends Model {
         if (prop in obj.data) {
           const data = obj.get();
           return data[prop];
-        } else {
-          return obj[prop];
         }
+          return obj[prop];
       },
       set: (obj, prop, value) => {
         obj.data[prop] = value;

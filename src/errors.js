@@ -12,7 +12,7 @@
 export function Forbidden(url) {
   return {
     status: 403,
-    message: Boolean(url) ? `Not authorized to access \`${url}\`` : 'Unauthorized',
+    message: url ? `Not authorized to access \`${url}\`` : 'Unauthorized',
   };
 }
 

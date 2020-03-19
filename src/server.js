@@ -33,9 +33,7 @@ function normalize(url) {
   return { id, endpoint };
 }
 
-_.isError = (data) => {
-  return _.isObject(result) && _.has(result, 'status') && _.has(result, 'message') && result.status >= 400;
-};
+_.isError = data => _.isObject(data) && _.has(data, 'status') && _.has(data, 'message') && data.status >= 400;
 
 _.cast = (id) => {
   if (!_.isNaN(Number(id))) {
@@ -116,17 +114,16 @@ export class Server {
         return data;
       },
       post: (data, id) => {
-        process = (item) => {
+        const process = (item) => {
           if (id && relation && key) {
             item[key] = id;
           }
           return _.omit(this.db[model].add(item), exclude);
-        }
+        };
         if (_.isArray(data)) {
           return data.map(item => process(item));
-        } else {
-          return process(data);
         }
+          return process(data);
       },
     };
   }
@@ -148,7 +145,7 @@ export class Server {
     const exclude = options.exclude || [];
     const { model, relation, key } = options;
     return {
-      get: id => {
+      get: (id) => {
         // reformat id for relation
         if (id && relation && key) {
           if (!(id in this.db[relation].data)) {
@@ -158,7 +155,7 @@ export class Server {
         }
 
         // process
-        if(!(id in this.db[model].data)) {
+        if (!(id in this.db[model].data)) {
           return undefined;
         }
         return _.omit(this.db[model].get(id), exclude);
@@ -169,7 +166,7 @@ export class Server {
           if (!(id in this.db[relation].data)) {
             return undefined;
           }
-          if(!(data.id in this.db[model].data)) {
+          if (!(data.id in this.db[model].data)) {
             return undefined;
           }
           this.db[relation].data[id][key] = data.id;
@@ -177,20 +174,20 @@ export class Server {
         }
 
         // without relation
-        if(!(id in this.db[model].data)) {
+        if (!(id in this.db[model].data)) {
           return undefined;
         }
-        return _.omit(this.db[model].update(id, data), exclude)
+        return _.omit(this.db[model].update(id, data), exclude);
       },
       delete: (id) => {
         // with relation
         if (id && relation && key) {
           this.db[relation].update(id, { [key]: null });
-          return;
+          return undefined;
         }
 
         // without relation
-        return this.db[model].remove(id)
+        return this.db[model].remove(id);
       },
     };
   }
@@ -211,7 +208,7 @@ export class Server {
     const model = options.model;
     return {
       get: () => _.omit(this.db[model].json(), exclude),
-      put: (data) => _.omit(this.db[model].update(data), exclude),
+      put: data => _.omit(this.db[model].update(data), exclude),
       delete: () => this.db[model].reset(),
     };
   }
@@ -262,8 +259,9 @@ export class Server {
    */
   dump() {
     const result = {};
-    Object.keys(this.db).map(key => {
+    Object.keys(this.db).map((key) => {
       result[key] = this.db[key].json();
+      return result[key];
     });
     return result;
   }

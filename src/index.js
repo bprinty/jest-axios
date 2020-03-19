@@ -7,7 +7,9 @@
 // -------
 import { Server } from './server';
 import { Singleton, Collection } from './models';
-import { Forbidden, NotFound, Missing, ServerError } from './errors';
+import {
+ Forbidden, NotFound, Missing, ServerError,
+} from './errors';
 
 
 // exports
@@ -22,5 +24,5 @@ export default {
   Forbidden,
   NotFound,
   Missing,
-  ServerError
-}
+  ServerError,
+};

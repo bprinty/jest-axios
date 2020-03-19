@@ -1,14 +1,21 @@
 {
-  "name": "js-package",
-  "homepage": "https://bprinty.github.io/js-package",
-  "repository": "https://github.com/bprinty/js-package",
-  "version": "0.0.2",
+  "name": "jest-axios",
+  "homepage": "https://bprinty.github.io/jest-axios",
+  "repository": "https://github.com/bprinty/jest-axios",
+  "version": "0.1.0",
   "authors": [
     "Blake Printy <bprinty@gmail.com> (http://bprinty.github.io)"
   ],
-  "description": "Fight for the Users!",
+  "description": "REST API Server Mocking with Axios",
   "license": "Apache-2.0",
-  "keywords": [],
+  "keywords": [
+    "jest",
+    "mock",
+    "rest",
+    "api",
+    "axios",
+    "testing"
+  ],
   "ignore": [
     "**/.*",
     "node_modules",
@@ -28,15 +35,14 @@
     "docs": "vuepress build docs --no-cache",
     "docs:dev": "vuepress dev docs --no-cache",
     "docs:clean": "rm -rf docs/.vuepress/dist",
-    "docs:deploy": "yarn docs:clean && yarn docs && git init && git add -A && git commit -m \"$npm_package_name, $npm_package_version\" && git push -f $npm_package_repository master:gh-pages",
+    "docs:deploy": "yarn docs:clean && yarn docs && git init && git add -A && git commit -m \"$npm_package_name, $npm_package_version\" && git push -f git@github.com:bprinty/jest-axios.git master:gh-pages",
     "tag": "git tag -f $npm_package_version && git push -f origin $npm_package_version",
-    "release": "yarn build && yarn release:tag && yarn docs:deploy && yarn publish"
+    "release": "yarn build && yarn tag && yarn docs:deploy && yarn publish"
   },
   "main": [
     "dist/index.min.js",
     "dist/index.cjs.js",
-    "dist/index.esm.js",
-    "dist/index.css"
+    "dist/index.esm.js"
   ],
   "module": "dist/index.esm.js",
   "devDependencies": {
@@ -54,9 +60,7 @@
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-import": "^2.18.0",
     "jest": "^25.1.0",
-    "mermaid": "^8.4.7",
     "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-sass": "^1.2.2",
     "rollup-plugin-terser": "^5.3.0",
     "vuepress": "^1.2.0",
     "vuepress-jsdoc": "^2.0.0",

@@ -137,6 +137,19 @@ export class Collection extends Model {
    * @param {object} - Data to add to collection.
    */
   add(data) {
+    // create template for missing function fields
+    let tmpl = {};
+    const keys = Object.keys(this.data);
+    if (keys.length) {
+      tmpl = this.data[keys[0]];
+    }
+    _.map(tmpl, (value, key) => {
+      if (_.isFunction(value) && !(key in data)) {
+        data[key] = value;
+      }
+    });
+
+    // generate new index and save data
     this.head = this.index(this.head);
     this.data[this.head] = data;
     return this.get(this.head);

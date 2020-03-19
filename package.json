@@ -2,7 +2,7 @@
   "name": "jest-axios",
   "homepage": "https://bprinty.github.io/jest-axios",
   "repository": "https://github.com/bprinty/jest-axios",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "authors": [
     "Blake Printy <bprinty@gmail.com> (http://bprinty.github.io)"
   ],

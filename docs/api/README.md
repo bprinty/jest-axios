@@ -11,7 +11,7 @@ The main export of this API is the `Server` object, which is extended for any AP
 
 ### Server
 
-/autodoc src/index.js Server
+/autodoc src/server.js Server
 
 
 ## Database

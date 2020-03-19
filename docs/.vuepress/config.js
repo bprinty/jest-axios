@@ -17,7 +17,7 @@ module.exports = {
     docsBranch: 'master',
     editLinks: true,
     displayAllHeaders: true,
-    sidebarDepth: 1,
+    sidebarDepth: 2,
     locales: {
       '/': {
         label: 'English',

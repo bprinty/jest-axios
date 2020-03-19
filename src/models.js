@@ -238,7 +238,9 @@ export class Singleton extends Model {
   }
 }
 
+
 // exports
+// -------
 export default {
   Singleton,
   Collection,

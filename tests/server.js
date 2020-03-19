@@ -1,6 +1,6 @@
 
 // import
-import { Server } from '../src/index';
+import { Server } from '../src/server';
 import { ServerError, Forbidden } from '../src/errors';
 
 // database

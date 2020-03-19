@@ -19,7 +19,7 @@ yarn add jest-axios
 To configure your application to use this module, extend the `Server` object for serving the models in your app:
 
 ```javascript
-import { Server, collection, model } from 'jest-axios';
+import { Server } from 'jest-axios';
 
 // database
 class App extends Server {

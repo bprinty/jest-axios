@@ -9,8 +9,8 @@ class App extends Server {
    * Default data for server mock.
    */
   data() {
-    const getAuthor = post => this.get('authors', post.author_id);
-    const getComments = post => this.get('comments').filter(x => x.post_id === post.id);
+    const getAuthor = post => this.db.authors.get(post.author_id) || null;
+    const getComments = post => this.db.comments.all().filter(x => x.post_id === post.id);
     return {
       profile: {
         username: 'admin',
@@ -58,20 +58,22 @@ class App extends Server {
       }),
       '/posts/:id': this.model({
         model: 'posts',
-        exclude: ['author_id'],
+        exclude: ['author_id', 'comments'],
       }),
       '/posts/:id/author': this.model({
         model: 'authors',
+        relation: 'posts',
         key: 'author_id',
       }),
       '/posts/:id/history': this.collection({
         model: 'history',
+        relation: 'posts',
         key: 'post_id',
       }),
       '/posts/:id/archive': {
-        post: (id) => {
-          this.db.posts[id].archived = true;
-          return this.get('posts', id);
+        post: (data, id) => {
+          this.db.posts.update(id, { archived: true });
+          return this.db.posts.get(id);
         },
       },
 
@@ -80,6 +82,7 @@ class App extends Server {
       '/authors/:id': this.model('authors'),
       '/authors/:id/posts': this.collection({
         model: 'posts',
+        relation: 'authors',
         key: 'author_id',
         exclude: ['author', 'comments'],
       }),

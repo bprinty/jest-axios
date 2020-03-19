@@ -100,8 +100,7 @@ describe('api', () => {
 
     // nested create
     res = await axios.post('/posts/1/history', { delta: 'baz' });
-    assert.equal(res.status, 200);
-    assert.equal(res.data.length, 3);
+    assert.equal(res.status, 201);
   });
 
   test('axios.put', async () => {

@@ -9,8 +9,7 @@ module.exports = {
   },
   theme: '@vuepress/theme-default',
   plugins: [
-    // 'autodoc'
-    require('../../../vuepress-plugin-autodoc/dist/index.cjs.js')
+    'autodoc',
   ],
   themeConfig: {
     repo: 'bprinty/jest-axios',

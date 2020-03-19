@@ -195,7 +195,7 @@ api() {
     '/posts/:id': this.model('posts'),
     '/posts/:id/archive': {
       post: (id) => {
-        this.db.posts[id].archive = true;
+        this.db.posts.update(id, { archived: true });
         return { status: 'ok' };
       },
     }
@@ -250,14 +250,22 @@ class App extends Server {
     return {
       '/posts': this.collection('posts'),
       '/posts/:id': this.model('posts'),
-      '/posts/:id/authors': this.model('authors', { key: 'author_id' }),
-      '/posts/:id/comments': this.collection('comments', { key: 'post_id' }),
+      '/posts/:id/authors': this.model({
+        model: 'authors',
+        relation: 'posts',
+        key: 'author_id'
+      }),
+      '/posts/:id/comments': this.collection({
+        model: 'comments',
+        relation: 'posts',
+        key: 'post_id'
+      }),
     };
   }
 }
 ```
 
-In the example above, the `collection` and `model` factory methods take an option object. For the `model` factory method, the `key` option represents a foreign key **on the requested resource** to the specified model. For the `collection` factory method, the `key` option represents a foreign key **on the related collection** that is linked to the requested resource's `id`.
+In the example above, the `collection` and `model` factory methods take an option object. For the `model` factory method, the `key` option represents a foreign key **on the `relation`** to the specified `model`. For the `collection` factory method, the `key` option represents a foreign key **on the `model`** that is linked to specified `relation`.
 
 If the syntax above for configuring nested resource fetching is confusing, you can configure the relations manually (above is shorthand for configuring a common pattern). For clarity, here is how you could configure the relations manually:
 
@@ -269,27 +277,21 @@ api() {
     '/posts/:id/authors': {
       get: (id) => {
         const authorId = this.db.posts[id].author_id;
-        return this.db.authors[authorId];
+        return this.db.authors.get(authorId);
       },
       post: (id, data) => {
-        this.db.posts[id].author_id = data.id;
-        return this.db.authors[data.id];
+        this.db.posts.update(id, { author_id: data.id });
+        return this.db.authors.get(data.id);
       }
     },
     '/posts/:id/comments': {
       get: (id) => {
-        return this.db.comments.filter(x => x.post_id === id);
+        return this.db.comments.all().filter(x => x.post_id === id);
       },
       post: (id, data) => {
         data.post_id = id;
-        const result = this.db.comments.add(data);
-        return result;
+        return this.db.comments.add(data);
       },
-    },
-    '/posts/:id/comments/:comment_id': {
-      delete: (id, comment_id) => {
-        delete this.db.comments[comment_id];
-      }
     },
   };
 }
@@ -302,8 +304,8 @@ Nesting resources inside payloads for a single model instance is common practice
 ```javascript
 // showing data block only
 data() {
-  const getAuthor = post => this.db.authors.get(post.author_id);
-  const getComments = post => this.db.comments.filter(x => x.post_id === post.id);
+  const getAuthor = post => this.db.authors.get(post.author_id) || null;
+  const getComments = post => this.db.comments.all().filter(x => x.post_id === post.id);
   return {
     posts: [
       {
@@ -338,8 +340,14 @@ And in the `api()` configuration block, we can subset the responses by specific 
 ```javascript
 api() {
   return {
-    '/posts': this.collection('posts', { exclude: ['author', 'comments'] }),
-    '/posts/:id': this.model('posts', { exclude: ['author_id'] }),
+    '/posts': this.collection({
+      model: 'posts',
+      exclude: ['author', 'comments'],
+    }),
+    '/posts/:id': this.model({
+      model: 'posts',
+      exclude: ['author_id']
+    }),
   };
 }
 ```
@@ -413,11 +421,10 @@ api() {
     '/profile': {
       get: () => this.db.profile,
       put: (data) => {
-        this.db.profile = Object.assign(this.db.profile, data);
-        return this.db.profile;
+        return this.db.profile.update(data);
       },
       delete: () => {
-        this.reset('profile')
+        return this.db.profile.reset();
       },
     },
   };
@@ -481,14 +488,14 @@ beforeAll(() => {
 });
 ```
 
-Finally, to access the state of a database during or after testing, use the `server.db` property:
+Finally, to access the state of a database during or after testing, use the `server.dump()` property:
 
 ```javascript
 jest.mock('axios');
 server.init();
 afterAll(() => {
   console.log('Printing Database!');
-  console.log(server.db);
+  console.log(server.dump());
 });
 ```
 

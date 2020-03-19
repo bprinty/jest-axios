@@ -1,6 +1,6 @@
 # API
 
-## Classes
+## Default
 
 The main export of this API is the `Server` object, which is extended for any API mocking. Important components of the object to take node of are:
 
@@ -12,6 +12,34 @@ The main export of this API is the `Server` object, which is extended for any AP
 ### Server
 
 /autodoc src/index.js Server
+
+
+## Database
+
+Internally, data are managed via `Model` objects that provide utilities for crud operations on database models. Below are examples of how these model objects are used under the hood for a `Server` object (see the example in the [Guide](/guide/) section for context):
+
+```javascript
+// get model with rendered functions and id
+server.db.posts.get(1);
+
+// update model
+server.db.posts.update(1, { title: 'Foo', body: 'bar' });
+
+// add new model to collection (resolving id)
+server.db.posts.add({ title: 'Foo', body: 'bar' });
+
+// remove model from collection
+server.db.posts.remove(1);
+```
+
+### Collection
+
+/autodoc src/models.js Collection
+
+
+### Singleton
+
+/autodoc src/models.js Singleton
 
 
 ## Errors

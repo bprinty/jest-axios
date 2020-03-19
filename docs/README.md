@@ -50,10 +50,7 @@ class App extends Server {
       '/todos': this.collection('todos'),
       '/todos/:id': this.model('todos'),
       '/todos/:id/complete': {
-        post: (id) => {
-          this.db.todos[id].done = true;
-          return this.db.todos[id];
-        }
+        post: id => this.db.todos.update(id, { done: true });
       },
     };
   }

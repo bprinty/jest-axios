@@ -7,7 +7,7 @@
     "Blake Printy <bprinty@gmail.com> (http://bprinty.github.io)"
   ],
   "description": "REST API Server Mocking with Axios",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "keywords": [
     "jest",
     "mock",

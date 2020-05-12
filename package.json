@@ -2,7 +2,7 @@
   "name": "jest-axios",
   "homepage": "https://bprinty.github.io/jest-axios",
   "repository": "https://github.com/bprinty/jest-axios",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "authors": [
     "Blake Printy <bprinty@gmail.com> (http://bprinty.github.io)"
   ],
@@ -36,15 +36,18 @@
     "docs:dev": "vuepress dev docs --no-cache",
     "docs:clean": "rm -rf docs/.vuepress/dist",
     "docs:deploy": "yarn docs:clean && yarn docs && cd docs/.vuepress/dist/ && git init && git add -A && git commit -m \"$npm_package_name, $npm_package_version\" && git push -f git@github.com:bprinty/jest-axios.git master:gh-pages",
-    "git:tag": "git tag -f $npm_package_version && git push -f origin $npm_package_version",
+    "git:check": "git diff --quiet || exit 1",
+    "git:tag": "yarn git:check && git tag -f $npm_package_version && git push -f origin $npm_package_version",
     "release": "yarn build && yarn git:tag && yarn docs:deploy && yarn publish"
   },
-  "main": [
+  "files": [
     "dist/index.min.js",
     "dist/index.cjs.js",
     "dist/index.esm.js"
   ],
+  "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
+  "unpkg": "dist/index.min.js",
   "devDependencies": {
     "@babel/core": "^7.8.6",
     "@babel/preset-env": "^7.8.6",

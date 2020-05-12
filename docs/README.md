@@ -66,7 +66,7 @@ Once we have this defined, we need to configure our tests to initialize the serv
 
 server = App('todo-app');
 jest.mock('axios');
-server.init();
+server.init(axios);
 ```
 
 With the server initialized, let's run some tests to show the mocked requests:

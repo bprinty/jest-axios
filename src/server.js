@@ -271,7 +271,7 @@ export class Server {
    * all axios requests. This method should be called before tests
    * run or at the beginning of a test session.
    */
-  init() {
+  init(axios) {
     let baseUrl = '';
 
     // GET

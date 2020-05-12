@@ -77,7 +77,7 @@ import axios from 'axios';
 import server from './server';
 
 jest.mock('axios');
-server.init();
+server.init(axios);
 
 test('posts test', async () => {
 
@@ -472,7 +472,7 @@ There are several utilities that can be used during testing. First, to reset a d
 
 ```javascript
 jest.mock('axios');
-server.init();
+server.init(axios);
 beforeEach(() => {
   server.reset();
 });
@@ -482,7 +482,7 @@ This will reset the database down to it's initial state (with data configured in
 
 ```javascript
 jest.mock('axios');
-server.init();
+server.init(axios);
 beforeAll(() => {
   server.clear();
 });
@@ -492,7 +492,7 @@ Finally, to access the state of a database during or after testing, use the `ser
 
 ```javascript
 jest.mock('axios');
-server.init();
+server.init(axios);
 afterAll(() => {
   console.log('Printing Database!');
   console.log(server.dump());

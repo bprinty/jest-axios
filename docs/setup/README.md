@@ -51,7 +51,7 @@ And use the following to automatically mock axios requests inside jest (should h
 ```javascript
 // required for mocking axios
 jest.mock('axios');
-server.init();
+server.init(axios);
 
 // optional - reset server to initial state between tests
 beforeEach(() => {
@@ -77,7 +77,7 @@ test('api.test', async () => {
 ```
 
 ::: tip
-When initializing the server, you **must** call `server.init()` after `jest.mock('axios')`. Otherwise, axios will not be mocked.
+When initializing the server, you **must** call `server.init(axios)` after `jest.mock('axios')`. Otherwise, axios will not be mocked.
 :::
 
 When configured, this package will even mock requests nested inside the package you're testing. For example, the following tests will pass (using the `server` object from above):
@@ -85,7 +85,7 @@ When configured, this package will even mock requests nested inside the package 
 ```javascript
 // configure mock
 jest.mock('axios');
-server.init()
+server.init(axios)
 
 // nest axios requests in other functions
 async get(url) {

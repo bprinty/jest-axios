@@ -20197,8 +20197,6 @@ var axios_1 = axios;
 var default_1 = axios;
 axios_1.default = default_1;
 
-var axios$1 = axios_1;
-
 /**
  * Data managers.
  */
@@ -20826,10 +20824,10 @@ class Server {
    */
 
 
-  init() {
+  init(axios) {
     let baseUrl = ''; // GET
 
-    axios$1.get.mockImplementation(url => {
+    axios.get.mockImplementation(url => {
       const {
         id,
         endpoint
@@ -20861,7 +20859,7 @@ class Server {
       });
     }); // POST
 
-    axios$1.post.mockImplementation((url, data) => {
+    axios.post.mockImplementation((url, data) => {
       const {
         id,
         endpoint
@@ -20887,7 +20885,7 @@ class Server {
       });
     }); // PUT
 
-    axios$1.put.mockImplementation((url, data) => {
+    axios.put.mockImplementation((url, data) => {
       const {
         id,
         endpoint
@@ -20913,7 +20911,7 @@ class Server {
       });
     }); // DELETE
 
-    axios$1.delete.mockImplementation(url => {
+    axios.delete.mockImplementation(url => {
       const {
         id,
         endpoint
@@ -20939,15 +20937,15 @@ class Server {
       });
     }); // instance creation
 
-    axios$1.create.mockImplementation(params => {
+    axios.create.mockImplementation(params => {
       if (lodash.has(params, 'baseUrl')) {
         baseUrl = params.baseUrl;
       }
 
-      return axios$1;
+      return axios;
     }); // base handler
 
-    axios$1.mockImplementation(params => {
+    axios.mockImplementation(params => {
       const before = baseUrl;
 
       if (lodash.has(params, 'baseUrl')) {
@@ -20958,7 +20956,7 @@ class Server {
         method: 'get',
         data: {}
       }, params);
-      const method = axios$1[params.method];
+      const method = axios[params.method];
       const result = method(params.url, params.data);
       baseUrl = before;
       return result;

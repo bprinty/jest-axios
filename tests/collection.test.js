@@ -13,7 +13,7 @@ import server from './server';
 // config
 // ------
 jest.mock('axios');
-server.init();
+server.init(axios);
 beforeEach(() => {
   server.reset();
 });

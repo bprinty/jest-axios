@@ -20209,6 +20209,7 @@ function format(obj, id) {
 
   if (!lodash.isNaN(Number(data.id))) {
     data.id = Number(data.id);
+    obj.id = data.id;
   }
 
   lodash.map(obj, (value, key) => {

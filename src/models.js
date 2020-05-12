@@ -14,6 +14,7 @@ function format(obj, id) {
   const data = id ? { id } : {};
   if (!_.isNaN(Number(data.id))) {
     data.id = Number(data.id);
+    obj.id = data.id;
   }
   _.map(obj, (value, key) => {
     if (_.isFunction(value)) {

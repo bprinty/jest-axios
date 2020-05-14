@@ -20485,12 +20485,14 @@ function Forbidden(url) {
  * Generate promise response for missing resource.
  *
  * @param {string} url - Url to reject.
+ * @param {string} method - Request method to reject.
  */
 
-function NotFound(url) {
+function NotFound(url, method) {
+  const endpoint = typeof method === 'undefined' ? url : `${method} ${url}`;
   return {
     status: 404,
-    message: `URL \`${url}\` not in API`
+    message: `URL \`${endpoint}\` not in API`
   };
 }
 /**
@@ -20646,7 +20648,12 @@ class Server {
             item[key] = id;
           }
 
-          return lodash.omit(this.db[model].add(item), exclude);
+          if ('id' in item) {
+            return lodash.omit(this.db[model].update(item.id, item), exclude);
+          } else {
+            // eslint-disable-line
+            return lodash.omit(this.db[model].add(item), exclude);
+          }
         };
 
         if (lodash.isArray(data)) {
@@ -20654,6 +20661,18 @@ class Server {
         }
 
         return process(data);
+      },
+      put: (data, id) => {
+        if (!(id && relation && key && lodash.isArray(data))) {
+          return undefined;
+        }
+
+        const process = item => {
+          item[key] = id;
+          return lodash.omit(this.db[model].update(item.id, item), exclude);
+        };
+
+        return data.map(item => process(item));
       }
     };
   }
@@ -20721,6 +20740,25 @@ class Server {
         }
 
         return lodash.omit(this.db[model].update(id, data), exclude);
+      },
+      post: (data, id) => {
+        if (!(id && relation && key && lodash.isPlainObject(data))) {
+          return undefined;
+        }
+
+        let res;
+
+        if ('id' in data) {
+          res = lodash.omit(this.db[model].update(data.id, data), exclude);
+        } else {
+          // eslint-disable-line
+          res = lodash.omit(this.db[model].add(data), exclude);
+        }
+
+        this.db[relation].update(id, {
+          [key]: res.id
+        });
+        return res;
       },
       delete: id => {
         // with relation
@@ -20832,14 +20870,14 @@ class Server {
       return new Promise((resolve, reject) => {
         // handle invalid urls
         if (!(endpoint in this._api) || this._api[endpoint] === null) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'GET'));
         } // handle missing server methods
 
 
         const method = this._api[endpoint].get;
 
         if (method === undefined) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'GET'));
         } // operate
 
 
@@ -20864,14 +20902,14 @@ class Server {
       return new Promise((resolve, reject) => {
         // handle invalid urls
         if (!(endpoint in this._api) || this._api[endpoint] === null) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'POST'));
         } // handle missing server methods
 
 
         const method = this._api[endpoint].post;
 
         if (method === undefined) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'POST'));
         } // operate
 
 
@@ -20890,14 +20928,14 @@ class Server {
       return new Promise((resolve, reject) => {
         // handle invalid urls
         if (!(endpoint in this._api) || this._api[endpoint] === null) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'PUT'));
         } // handle missing server methods
 
 
         const method = this._api[endpoint].put;
 
         if (method === undefined) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'PUT'));
         } // operate
 
 
@@ -20916,14 +20954,14 @@ class Server {
       return new Promise((resolve, reject) => {
         // handle invalid urls
         if (!(endpoint in this._api) || this._api[endpoint] === null) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'DELETE'));
         } // handle missing server methods
 
 
         const method = this._api[endpoint].delete;
 
         if (method === undefined) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'DELETE'));
         } // resolve response
 
 

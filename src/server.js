@@ -6,7 +6,6 @@
 // imports
 // -------
 import _ from 'lodash';
-import axios from 'axios';
 
 import { Singleton, Collection } from './models';
 import { NotFound, Missing } from './errors';

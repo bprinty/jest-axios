@@ -118,12 +118,26 @@ export class Server {
           if (id && relation && key) {
             item[key] = id;
           }
-          return _.omit(this.db[model].add(item), exclude);
+          if ('id' in item) {
+            return _.omit(this.db[model].update(item.id, item), exclude);
+          } else { // eslint-disable-line
+            return _.omit(this.db[model].add(item), exclude);
+          }
         };
         if (_.isArray(data)) {
           return data.map(item => process(item));
         }
           return process(data);
+      },
+      put: (data, id) => {
+        if (!(id && relation && key && _.isArray(data))) {
+          return undefined;
+        }
+        const process = (item) => {
+          item[key] = id;
+          return _.omit(this.db[model].update(item.id, item), exclude);
+        };
+        return data.map(item => process(item));
       },
     };
   }
@@ -178,6 +192,19 @@ export class Server {
           return undefined;
         }
         return _.omit(this.db[model].update(id, data), exclude);
+      },
+      post: (data, id) => {
+        if (!(id && relation && key && _.isPlainObject(data))) {
+          return undefined;
+        }
+        let res;
+        if ('id' in data) {
+          res = _.omit(this.db[model].update(data.id, data), exclude);
+        } else { // eslint-disable-line
+          res = _.omit(this.db[model].add(data), exclude);
+        }
+        this.db[relation].update(id, { [key]: res.id });
+        return res;
       },
       delete: (id) => {
         // with relation
@@ -280,13 +307,13 @@ export class Server {
       return new Promise((resolve, reject) => {
         // handle invalid urls
         if (!(endpoint in this._api) || this._api[endpoint] === null) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'GET'));
         }
 
         // handle missing server methods
         const method = this._api[endpoint].get;
         if (method === undefined) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'GET'));
         }
 
         // operate
@@ -307,13 +334,13 @@ export class Server {
       return new Promise((resolve, reject) => {
         // handle invalid urls
         if (!(endpoint in this._api) || this._api[endpoint] === null) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'POST'));
         }
 
         // handle missing server methods
         const method = this._api[endpoint].post;
         if (method === undefined) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'POST'));
         }
 
         // operate
@@ -330,13 +357,13 @@ export class Server {
       return new Promise((resolve, reject) => {
         // handle invalid urls
         if (!(endpoint in this._api) || this._api[endpoint] === null) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'PUT'));
         }
 
         // handle missing server methods
         const method = this._api[endpoint].put;
         if (method === undefined) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'PUT'));
         }
 
         // operate
@@ -353,13 +380,13 @@ export class Server {
       return new Promise((resolve, reject) => {
         // handle invalid urls
         if (!(endpoint in this._api) || this._api[endpoint] === null) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'DELETE'));
         }
 
         // handle missing server methods
         const method = this._api[endpoint].delete;
         if (method === undefined) {
-          reject(NotFound(url));
+          reject(NotFound(url, 'DELETE'));
         }
 
         // resolve response

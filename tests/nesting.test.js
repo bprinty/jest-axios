@@ -51,8 +51,20 @@ describe('nesting', () => {
     assert.deepEqual(res.data, {
         id: 3,
         delta: 'baz',
-        post_id: 2
+        post_id: 2,
     });
+
+    // model
+    res = await axios.post('/posts/1/author', { email: 'jack@doe.com', name: 'Jack Doe' });
+    assert.equal(res.status, 201);
+    assert.deepEqual(res.data, {
+      id: 3,
+      email: 'jack@doe.com',
+      name: 'Jack Doe',
+    });
+    res = await axios.get('/authors/3/posts');
+    assert.equal(res.data.length, 1);
+    assert.equal(res.data[0].id, 1);
 
     // action
     res = await axios.post('/posts/1/archive');
@@ -61,8 +73,18 @@ describe('nesting', () => {
   });
 
   test('nesting.put', async () => {
+    // collection
+    res = await axios.put('/posts/2/history', [{ id: 1 }]);
+    assert.equal(res.status, 200);
+    assert.deepEqual(res.data, [{
+        id: 1,
+        delta: 'foo',
+        post_id: 2
+    }]);
+
     // model
     res = await axios.put('/posts/1/author', { id: 2 });
+    assert.equal(res.status, 200);
     assert.deepEqual(res.data, {
       id: 2,
       email: 'john@doe.com',

@@ -20,11 +20,13 @@ export function Forbidden(url) {
  * Generate promise response for missing resource.
  *
  * @param {string} url - Url to reject.
+ * @param {string} method - Request method to reject.
  */
-export function NotFound(url) {
+export function NotFound(url, method) {
+  const endpoint = typeof method === 'undefined' ? url : `${method} ${url}`;
   return {
     status: 404,
-    message: `URL \`${url}\` not in API`,
+    message: `URL \`${endpoint}\` not in API`,
   };
 }
 

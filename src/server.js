@@ -132,6 +132,11 @@ export class Server {
         if (!(id && relation && key && _.isArray(data))) {
           return undefined;
         }
+        this.db[model].all().forEach((item) => {
+          if (item[key] === id) {
+            this.db[model].update(item.id, { [key]: undefined });
+          }
+        });
         const process = (item) => {
           item[key] = id;
           return _.omit(this.db[model].update(item.id, item), exclude);

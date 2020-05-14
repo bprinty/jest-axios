@@ -74,13 +74,14 @@ describe('nesting', () => {
 
   test('nesting.put', async () => {
     // collection
-    res = await axios.put('/posts/2/history', [{ id: 1 }]);
+    res = await axios.put('/posts/1/history', [{ id: 1 }]);
     assert.equal(res.status, 200);
-    assert.deepEqual(res.data, [{
+    assert.equal(res.data.length, 1);
+    assert.deepEqual(res.data[0], {
         id: 1,
         delta: 'foo',
-        post_id: 2
-    }]);
+        post_id: 1
+    });
 
     // model
     res = await axios.put('/posts/1/author', { id: 2 });

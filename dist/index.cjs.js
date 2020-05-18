@@ -17645,7 +17645,7 @@ class Server {
           }
 
           this.db[relation].data[id][key] = data.id;
-          return this.db[model].get(data.id);
+          id = data.id;
         } // without relation
 
 

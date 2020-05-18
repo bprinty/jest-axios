@@ -179,6 +179,7 @@ export class Server {
         return _.omit(this.db[model].get(id), exclude);
       },
       put: (data, id) => {
+
         // with relation
         if (id && relation && key) {
           if (!(id in this.db[relation].data)) {
@@ -188,7 +189,7 @@ export class Server {
             return undefined;
           }
           this.db[relation].data[id][key] = data.id;
-          return this.db[model].get(data.id);
+          id = data.id;
         }
 
         // without relation

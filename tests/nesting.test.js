@@ -84,15 +84,16 @@ describe('nesting', () => {
     });
 
     // model
-    res = await axios.put('/posts/1/author', { id: 2 });
+    res = await axios.put('/posts/1/author', { id: 2, name: 'Jack Doe', email: 'jack@doe.com' });
     assert.equal(res.status, 200);
     assert.deepEqual(res.data, {
       id: 2,
-      email: 'john@doe.com',
-      name: 'John Doe'
+      email: 'jack@doe.com',
+      name: 'Jack Doe'
     });
     res = await axios.get('/posts/1/author');
     assert.equal(res.data.id, 2);
+    assert.equal(res.data.name, 'Jack Doe');
   });
 
   test('nesting.delete', async () => {

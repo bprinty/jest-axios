@@ -17585,6 +17585,19 @@ class Server {
         }
 
         return process(data);
+      },
+      delete: (data, id) => {
+        const process = item => {
+          if ('id' in item) {
+            return this.db[model].remove(item.id);
+          }
+        };
+
+        if (lodash.isArray(data)) {
+          return data.map(item => process(item));
+        }
+
+        return process(data);
       }
     };
   }
@@ -17858,7 +17871,7 @@ class Server {
       });
     }); // DELETE
 
-    axios.delete.mockImplementation(url => {
+    axios.delete.mockImplementation((url, data) => {
       const {
         id,
         endpoint
@@ -17877,9 +17890,17 @@ class Server {
         } // resolve response
 
 
+        let result;
+
+        if (typeof data === 'undefined') {
+          result = this._api[endpoint].delete(id);
+        } else {
+          result = this._api[endpoint].delete(data, id);
+        }
+
         resolve({
           status: 204,
-          data: this._api[endpoint].delete(id)
+          data: result
         });
       });
     }); // instance creation

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Usage | Jest Axios</title>
+    <meta name="description" content="Axios request mocking for REST API testing.">
+    <meta name="generator" content="VuePress 1.4.0">
+    
+    
+    <link rel="preload" href="/jest-axios/assets/css/0.styles.fa3dcd71.css" as="style"><link rel="preload" href="/jest-axios/assets/js/app.ab7e3225.js" as="script"><link rel="preload" href="/jest-axios/assets/js/2.3bc74574.js" as="script"><link rel="preload" href="/jest-axios/assets/js/7.170931b2.js" as="script"><link rel="prefetch" href="/jest-axios/assets/js/3.7a41b788.js"><link rel="prefetch" href="/jest-axios/assets/js/4.5f60d4ea.js"><link rel="prefetch" href="/jest-axios/assets/js/5.41d2ac49.js"><link rel="prefetch" href="/jest-axios/assets/js/6.3f792ad2.js"><link rel="prefetch" href="/jest-axios/assets/js/8.c61926f3.js"><link rel="prefetch" href="/jest-axios/assets/js/9.f7a5189e.js">
+    <link rel="stylesheet" href="/jest-axios/assets/css/0.styles.fa3dcd71.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/jest-axios/" class="home-link router-link-active"><!----> <span class="site-name">Jest Axios</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"> <a href="https://github.com/bprinty/jest-axios" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"> <a href="https://github.com/bprinty/jest-axios" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></nav>  <ul class="sidebar-links"><li><a href="/jest-axios/setup/" class="sidebar-link">Setup</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/jest-axios/setup/#install" class="sidebar-link">Install</a></li><li class="sidebar-sub-header"><a href="/jest-axios/setup/#configure" class="sidebar-link">Configure</a></li></ul></li><li><a href="/jest-axios/guide/" class="active sidebar-link">Guide</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/jest-axios/guide/#mocking-endpoints" class="sidebar-link">Mocking Endpoints</a></li><li class="sidebar-sub-header"><a href="/jest-axios/guide/#mocking-data-models" class="sidebar-link">Mocking Data Models</a></li><li class="sidebar-sub-header"><a href="/jest-axios/guide/#mocking-endpoint-actions" class="sidebar-link">Mocking Endpoint Actions</a></li><li class="sidebar-sub-header"><a href="/jest-axios/guide/#mocking-model-relations" class="sidebar-link">Mocking Model Relations</a></li><li class="sidebar-sub-header"><a href="/jest-axios/guide/#mocking-nested-resources" class="sidebar-link">Mocking Nested Resources</a></li><li class="sidebar-sub-header"><a href="/jest-axios/guide/#singleton-models" class="sidebar-link">Singleton Models</a></li><li class="sidebar-sub-header"><a href="/jest-axios/guide/#server-utilities" class="sidebar-link">Server Utilities</a></li></ul></li><li><a href="/jest-axios/api/" class="sidebar-link">API</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/jest-axios/api/#default" class="sidebar-link">Default</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/jest-axios/api/#server" class="sidebar-link">Server</a></li></ul></li><li class="sidebar-sub-header"><a href="/jest-axios/api/#database" class="sidebar-link">Database</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/jest-axios/api/#collection" class="sidebar-link">Collection</a></li><li class="sidebar-sub-header"><a href="/jest-axios/api/#singleton" class="sidebar-link">Singleton</a></li></ul></li><li class="sidebar-sub-header"><a href="/jest-axios/api/#errors" class="sidebar-link">Errors</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/jest-axios/api/#notfound" class="sidebar-link">NotFound</a></li><li class="sidebar-sub-header"><a href="/jest-axios/api/#forbidden" class="sidebar-link">Forbidden</a></li><li class="sidebar-sub-header"><a href="/jest-axios/api/#missing" class="sidebar-link">Missing</a></li></ul></li></ul></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="usage"><a href="#usage" class="header-anchor">#</a> Usage</h1> <p>This section details how to use the module, including all of the ways you can extend the <a href="/jest-axios/api/#server"><code>Server</code></a> class provided by this package to mock both simple and complex REST APIs for testing.</p> <p>The following concepts will be used to incrementally expose readers to the functionality provided by this package. The sections below start off simple and progressively become more and more complex to expose functionality:</p> <ul><li><a href="#mocking-endpoints">Mocking Endpoints</a> - How to mock simple request methods for specific endpoints.</li> <li><a href="#mocking-data-models">Mocking Data Models</a> - How to build data models and mock requests for CRUD operations.</li> <li><a href="#mocking-endpoint-actions">Mocking Endpoint Actions</a> - How to mock nested actions for data models.</li> <li><a href="#mocking-model-relations">Mocking Model Relations</a> - How to incorporate relations between data models.</li> <li><a href="#mocking-nested-resources">Mocking Nested Resources</a> - How to nest related resource payloads in requests.</li></ul> <p>For additional context on how to use this module during testing, see the <a href="/jest-axios/#quickstart">Quickstart</a> section of the documentation.</p> <h2 id="mocking-endpoints"><a href="#mocking-endpoints" class="header-anchor">#</a> Mocking Endpoints</h2> <p>The main feature provided by this package is the <em>ability to mock REST endpoints</em>. For that goal, we can easily define functions to mock specific rest endpoints by extending the <code>Server</code> class provided with this package. To set up an API mock that will automatically return fake data during <code>axios</code> requests made by your project, first extend the <code>Server</code> class and define functions for the various request types:</p> <div class="custom-block warning"><p class="custom-block-title">Note</p> <p>The example immediately below is meant to be illustrative, not suggestive. See the sections after this one for a better example of how to use this package.</p></div> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// contents of tests/server.js</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> Server <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'jest-axios'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">class</span> <span class="token class-name">App</span> <span class="token keyword">extends</span> <span class="token class-name">Server</span> <span class="token punctuation">{</span>
+  <span class="token function">api</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      <span class="token string">'/posts'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token function-variable function">get</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">[</span>
+          <span class="token punctuation">{</span> id<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span> title<span class="token operator">:</span> <span class="token string">'Foo'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'foo bar'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+          <span class="token punctuation">{</span> id<span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span> title<span class="token operator">:</span> <span class="token string">'Bar'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'bar baz'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">]</span><span class="token punctuation">,</span>
+        <span class="token function-variable function">post</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">data</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span> id<span class="token operator">:</span> <span class="token number">3</span><span class="token punctuation">,</span> <span class="token operator">...</span>data <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token string">'/posts/1'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token function-variable function">get</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span> id<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span> title<span class="token operator">:</span> <span class="token string">'Foo'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'foo bar'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token function-variable function">put</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">data</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> data<span class="token punctuation">,</span>
+        <span class="token function-variable function">delete</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token string">'/posts/2'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+        <span class="token function-variable function">get</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span> id<span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span> title<span class="token operator">:</span> <span class="token string">'Bar'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'bar baz'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token function">App</span><span class="token punctuation">(</span><span class="token string">'posts-app'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>Once these endpoints are defined, any axios call issuing <code>GET</code> requests for those endpoints will return the data specified in the code above:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/posts'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+[
+  { id: 1, title: 'Foo', body: 'foo bar' },
+  { id: 2, title: 'Bar', body: 'bar baz' },
+]
+*/</span>
+
+<span class="token comment">// get new post</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/posts/1'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+{ id: 1, title: 'Foo', body: 'foo bar' }
+*/</span>
+</code></pre></div><p>For example, here is a full <code>jest</code> test file that uses the <code>posts-app</code> mock above during testing:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token keyword">import</span> axios <span class="token keyword">from</span> <span class="token string">'axios'</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> server <span class="token keyword">from</span> <span class="token string">'./server'</span><span class="token punctuation">;</span>
+
+jest<span class="token punctuation">.</span><span class="token function">mock</span><span class="token punctuation">(</span><span class="token string">'axios'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+server<span class="token punctuation">.</span><span class="token function">init</span><span class="token punctuation">(</span>axios<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token function">test</span><span class="token punctuation">(</span><span class="token string">'posts test'</span><span class="token punctuation">,</span> <span class="token keyword">async</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+
+  <span class="token comment">// issue request</span>
+  <span class="token keyword">const</span> response <span class="token operator">=</span> <span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/posts'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// check status code</span>
+  assert<span class="token punctuation">.</span><span class="token function">equal</span><span class="token punctuation">(</span>response<span class="token punctuation">.</span>status<span class="token punctuation">,</span> <span class="token number">200</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// check payload</span>
+  assert<span class="token punctuation">.</span><span class="token function">equal</span><span class="token punctuation">(</span>response<span class="token punctuation">.</span>data<span class="token punctuation">,</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span> id<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span> title<span class="token operator">:</span> <span class="token string">'Foo'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'foo bar'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">{</span> id<span class="token operator">:</span> <span class="token number">2</span><span class="token punctuation">,</span> title<span class="token operator">:</span> <span class="token string">'Bar'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'bar baz'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>If you make a bad request (for an endpoint that isn't mocked by this library), you'll receive an appropriate response code:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/missing-endpoint'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">catch</span><span class="token punctuation">(</span><span class="token parameter">err</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  <span class="token comment">// err will have `status` and `message` data.</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>That covers the basics of the core functionality provided by this module, but defining singular endpoints like this can become messy if you're trying to mock many data models with many model instances. To simplify the process of mocking these requests with data, we can define <code>data()</code> configuration that will allow us to access a database of stored data when resolving requests.</p> <h2 id="mocking-data-models"><a href="#mocking-data-models" class="header-anchor">#</a> Mocking Data Models</h2> <p>When testing applications, we often need to pull data for specific data models and collections of those models from an API. To showcase a mock server that fakes this type of data, let's configure a simple mock server that hosts a simple collection called <code>posts</code>:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token keyword">import</span> <span class="token punctuation">{</span> Server <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'jest-axios'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">class</span> <span class="token class-name">App</span> <span class="token keyword">extends</span> <span class="token class-name">Server</span> <span class="token punctuation">{</span>
+
+  <span class="token function">data</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      posts<span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span> title<span class="token operator">:</span> <span class="token string">'Foo'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'foo bar'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">{</span> title<span class="token operator">:</span> <span class="token string">'Bar'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'bar baz'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">api</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      <span class="token string">'/posts'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">collection</span><span class="token punctuation">(</span><span class="token string">'posts'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token string">'/posts/:id'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">model</span><span class="token punctuation">(</span><span class="token string">'posts'</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><div class="custom-block tip"><p class="custom-block-title">TIP</p> <p>Whenever an <code>:id</code> parameter is embedded within a URL, an the url will automatically be parsed for the <code>id</code> parameter and the <code>id</code> parameter will become the first argument to the endpoint callable.</p></div> <p>With this simple configuration, axios will behave accordingly as the following requests are made:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// get collection of posts</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/posts'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+[
+  { id: 1, title: 'Foo', body: 'foo bar' },
+  { id: 2, title: 'Bar', body: 'bar baz' },
+]
+*/</span>
+
+<span class="token comment">// create new post</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/posts'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> title<span class="token operator">:</span> <span class="token string">'Baz'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'baz'</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+{ id: 3, title: 'Baz', body: 'baz' }
+*/</span>
+
+<span class="token comment">// get new post</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/posts/3'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+{ id: 3, title: 'Baz', body: 'baz' }
+*/</span>
+
+<span class="token comment">// update new post</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">'/posts/3'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> title<span class="token operator">:</span> <span class="token string">'BazBaz'</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+{ id: 3, title: 'BazBaz', body: 'baz' }
+*/</span>
+
+<span class="token comment">// delete new post and check if it exists</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">delete</span><span class="token punctuation">(</span><span class="token string">'/posts/3'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">try</span> <span class="token punctuation">{</span>
+  <span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/posts/3'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span>err<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token comment">/*
+{
+  status: 402,
+  message: 'Could not find resource `3`'
+}
+*/</span>
+</code></pre></div><h2 id="mocking-endpoint-actions"><a href="#mocking-endpoint-actions" class="header-anchor">#</a> Mocking Endpoint Actions</h2> <p>Now that we've highlighted basic model CRUD functionality, let's add some custom endpoints for performing actions on data. In this example, we want to include a nested <code>/posts/:id/archive</code> endpoint for setting an <code>archive</code> flag on <code>post</code> objects. To do so, we can update our <code>api()</code> definition like so:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token function">api</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    <span class="token string">'/posts'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">collection</span><span class="token punctuation">(</span><span class="token string">'posts'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token string">'/posts/:id'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">model</span><span class="token punctuation">(</span><span class="token string">'posts'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token string">'/posts/:id/archive'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token function-variable function">post</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">id</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>posts<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span>id<span class="token punctuation">,</span> <span class="token punctuation">{</span> archived<span class="token operator">:</span> <span class="token boolean">true</span> <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token punctuation">{</span> status<span class="token operator">:</span> <span class="token string">'ok'</span> <span class="token punctuation">}</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>With this defined, any <code>/posts/:id/archive</code> call will automatically be mocked:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// archive post</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">post</span><span class="token punctuation">(</span><span class="token string">'/posts/1/archive'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+{ status: 'ok' }
+*/</span>
+
+<span class="token comment">// get data to show new flag</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/posts/1'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+{ id: 1, title: 'Foo', body: 'foo bar', archived: true }
+*/</span>
+</code></pre></div><h2 id="mocking-model-relations"><a href="#mocking-model-relations" class="header-anchor">#</a> Mocking Model Relations</h2> <p>You can similarly use this pattern to automatically mock fetching nested resources. Let's say we want to track <code>authors</code> and <code>comments</code> related to a specific post. In this scenario, <code>posts</code> have a single author and multiple <code>comments</code>. To represent those relationships when defining data, you can use the following definitions:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token keyword">import</span> <span class="token punctuation">{</span> Server <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'jest-axios'</span><span class="token punctuation">;</span>
+
+
+<span class="token keyword">class</span> <span class="token class-name">App</span> <span class="token keyword">extends</span> <span class="token class-name">Server</span> <span class="token punctuation">{</span>
+
+  <span class="token function">data</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      posts<span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span> title<span class="token operator">:</span> <span class="token string">'Foo'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'foo bar'</span><span class="token punctuation">,</span> author_id<span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">{</span> title<span class="token operator">:</span> <span class="token string">'Bar'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'bar baz'</span><span class="token punctuation">,</span> author_id<span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">]</span><span class="token punctuation">,</span>
+      authors<span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span> name<span class="token operator">:</span> <span class="token string">'Jane Doe'</span><span class="token punctuation">,</span> email<span class="token operator">:</span> <span class="token string">'jane@doe.com'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">{</span> name<span class="token operator">:</span> <span class="token string">'John Doe'</span><span class="token punctuation">,</span> email<span class="token operator">:</span> <span class="token string">'john@doe.com'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">]</span><span class="token punctuation">,</span>
+      comments<span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span> user<span class="token operator">:</span> <span class="token string">'jack'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'foo comment'</span><span class="token punctuation">,</span> post_id<span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token punctuation">{</span> user<span class="token operator">:</span> <span class="token string">'jill'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'bar comment'</span><span class="token punctuation">,</span> post_id<span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">api</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      <span class="token string">'/posts'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">collection</span><span class="token punctuation">(</span><span class="token string">'posts'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token string">'/posts/:id'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">model</span><span class="token punctuation">(</span><span class="token string">'posts'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token string">'/posts/:id/authors'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">model</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+        model<span class="token operator">:</span> <span class="token string">'authors'</span><span class="token punctuation">,</span>
+        relation<span class="token operator">:</span> <span class="token string">'posts'</span><span class="token punctuation">,</span>
+        key<span class="token operator">:</span> <span class="token string">'author_id'</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+      <span class="token string">'/posts/:id/comments'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">collection</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+        model<span class="token operator">:</span> <span class="token string">'comments'</span><span class="token punctuation">,</span>
+        relation<span class="token operator">:</span> <span class="token string">'posts'</span><span class="token punctuation">,</span>
+        key<span class="token operator">:</span> <span class="token string">'post_id'</span>
+      <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>In the example above, the <code>collection</code> and <code>model</code> factory methods take an option object. For the <code>model</code> factory method, the <code>key</code> option represents a foreign key <strong>on the <code>relation</code></strong> to the specified <code>model</code>. For the <code>collection</code> factory method, the <code>key</code> option represents a foreign key <strong>on the <code>model</code></strong> that is linked to specified <code>relation</code>.</p> <p>If the syntax above for configuring nested resource fetching is confusing, you can configure the relations manually (above is shorthand for configuring a common pattern). For clarity, here is how you could configure the relations manually:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token function">api</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    <span class="token string">'/posts'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">collection</span><span class="token punctuation">(</span><span class="token string">'posts'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token string">'/posts/:id'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">model</span><span class="token punctuation">(</span><span class="token string">'posts'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token string">'/posts/:id/authors'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token function-variable function">get</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">id</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">const</span> authorId <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>posts<span class="token punctuation">[</span>id<span class="token punctuation">]</span><span class="token punctuation">.</span>author_id<span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>authors<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>authorId<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token function-variable function">post</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">id<span class="token punctuation">,</span> data</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>posts<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span>id<span class="token punctuation">,</span> <span class="token punctuation">{</span> author_id<span class="token operator">:</span> data<span class="token punctuation">.</span>id <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>authors<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>data<span class="token punctuation">.</span>id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token string">'/posts/:id/comments'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token function-variable function">get</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">id</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>comments<span class="token punctuation">.</span><span class="token function">all</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">filter</span><span class="token punctuation">(</span><span class="token parameter">x</span> <span class="token operator">=&gt;</span> x<span class="token punctuation">.</span>post_id <span class="token operator">===</span> id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token function-variable function">post</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">id<span class="token punctuation">,</span> data</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        data<span class="token punctuation">.</span>post_id <span class="token operator">=</span> id<span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>comments<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="mocking-nested-resources"><a href="#mocking-nested-resources" class="header-anchor">#</a> Mocking Nested Resources</h2> <p>Nesting resources inside payloads for a single model instance is common practice for reducing the number of requests that need to be made for pulling data associated with a view. With this library, you can mock nesting for related models by setting data properties equal to callable objects. In this example, let's say we want our <code>/posts/:id</code> endpoint to return nested data for <code>authors</code> and <code>comments</code> relations, but we don't want to bog down the <code>/posts</code> endpoint with those relations. First, we can augment the <code>posts</code> model with callable objects that return the data we need:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// showing data block only</span>
+<span class="token function">data</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">const</span> <span class="token function-variable function">getAuthor</span> <span class="token operator">=</span> <span class="token parameter">post</span> <span class="token operator">=&gt;</span> <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>authors<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>post<span class="token punctuation">.</span>author_id<span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+  <span class="token keyword">const</span> <span class="token function-variable function">getComments</span> <span class="token operator">=</span> <span class="token parameter">post</span> <span class="token operator">=&gt;</span> <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>comments<span class="token punctuation">.</span><span class="token function">all</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">filter</span><span class="token punctuation">(</span><span class="token parameter">x</span> <span class="token operator">=&gt;</span> x<span class="token punctuation">.</span>post_id <span class="token operator">===</span> post<span class="token punctuation">.</span>id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    posts<span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token punctuation">{</span>
+        title<span class="token operator">:</span> <span class="token string">'Foo'</span><span class="token punctuation">,</span>
+        body<span class="token operator">:</span> <span class="token string">'foo bar'</span><span class="token punctuation">,</span>
+        author_id<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+        author<span class="token operator">:</span> getAuthor<span class="token punctuation">,</span>
+        comments<span class="token operator">:</span> getComments<span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">{</span>
+        title<span class="token operator">:</span> <span class="token string">'Bar'</span><span class="token punctuation">,</span>
+        body<span class="token operator">:</span> <span class="token string">'bar baz'</span><span class="token punctuation">,</span>
+        author_id<span class="token operator">:</span> <span class="token number">1</span><span class="token punctuation">,</span>
+        author<span class="token operator">:</span> getAuthor<span class="token punctuation">,</span>
+        comments<span class="token operator">:</span> getComments<span class="token punctuation">,</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    authors<span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token punctuation">{</span> name<span class="token operator">:</span> <span class="token string">'Jane Doe'</span><span class="token punctuation">,</span> email<span class="token operator">:</span> <span class="token string">'jane@doe.com'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">{</span> name<span class="token operator">:</span> <span class="token string">'John Doe'</span><span class="token punctuation">,</span> email<span class="token operator">:</span> <span class="token string">'john@doe.com'</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">]</span><span class="token punctuation">,</span>
+    comments<span class="token operator">:</span> <span class="token punctuation">[</span>
+      <span class="token punctuation">{</span> user<span class="token operator">:</span> <span class="token string">'jack'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'foo comment'</span><span class="token punctuation">,</span> post_id<span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token punctuation">{</span> user<span class="token operator">:</span> <span class="token string">'jill'</span><span class="token punctuation">,</span> body<span class="token operator">:</span> <span class="token string">'bar comment'</span><span class="token punctuation">,</span> post_id<span class="token operator">:</span> <span class="token number">1</span> <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>And in the <code>api()</code> configuration block, we can subset the responses by specific keys:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token function">api</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    <span class="token string">'/posts'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">collection</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+      model<span class="token operator">:</span> <span class="token string">'posts'</span><span class="token punctuation">,</span>
+      exclude<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'author'</span><span class="token punctuation">,</span> <span class="token string">'comments'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token string">'/posts/:id'</span><span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">model</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+      model<span class="token operator">:</span> <span class="token string">'posts'</span><span class="token punctuation">,</span>
+      exclude<span class="token operator">:</span> <span class="token punctuation">[</span><span class="token string">'author_id'</span><span class="token punctuation">]</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>This type of configuration will result in the following axios mocks:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/posts'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+[
+  { id: 1, title: 'Foo', body: 'foo bar', author_id: 1 },
+  { id: 2, title: 'Bar', body: 'bar baz', author_id: 1 },
+]
+*/</span>
+
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/posts/1'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+{
+  id: 1,
+  title: 'Foo',
+  body: 'foo bar',
+  author: {
+    id: 1,
+    name: 'Jane Doe',
+    email: 'jane@doe.com',
+  }
+  comments: [
+    { user: 'jack', body: 'foo comment', post_id: 1 },
+    { user: 'jill', body: 'bar comment', post_id: 1 },
+  ]
+}
+*/</span>
+</code></pre></div><h2 id="singleton-models"><a href="#singleton-models" class="header-anchor">#</a> Singleton Models</h2> <p>Alongside Models and Collections, it's often useful to have a data model that represents singleton data instead of collection data. A common example of this is providing profile data to the currently logged-in user via a <code>/profile</code> endpoint contextualized to return information for the current user.</p> <p>Since we don't need to define a relational schema to represent users in our database (we're just concerned with actions of a single user), we can represent the profile data as a <code>singleton</code> model. Here is an example config with data and endpoint actions for a <code>/profile</code> singleton model:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token keyword">import</span> <span class="token punctuation">{</span> Server <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'jest-axios'</span><span class="token punctuation">;</span>
+
+<span class="token keyword">class</span> <span class="token class-name">App</span> <span class="token keyword">extends</span> <span class="token class-name">Server</span> <span class="token punctuation">{</span>
+
+  <span class="token function">data</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      profile<span class="token operator">:</span> <span class="token punctuation">{</span>
+        username<span class="token operator">:</span> <span class="token string">'admin'</span><span class="token punctuation">,</span>
+        <span class="token function-variable function">last_seen</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token keyword">new</span> <span class="token class-name">Date</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">api</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span>
+      <span class="token string">'/profile'</span><span class="token operator">:</span> self<span class="token punctuation">.</span><span class="token function">singleton</span><span class="token punctuation">(</span><span class="token string">'profile'</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token function">App</span><span class="token punctuation">(</span><span class="token string">'profile'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>For clarity, here is equivalent configuration for the <code>api()</code> block above:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token function">api</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token punctuation">{</span>
+    <span class="token string">'/profile'</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token function-variable function">get</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>profile<span class="token punctuation">,</span>
+      <span class="token function-variable function">put</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token parameter">data</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>profile<span class="token punctuation">.</span><span class="token function">update</span><span class="token punctuation">(</span>data<span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token function-variable function">delete</span><span class="token operator">:</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+        <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>db<span class="token punctuation">.</span>profile<span class="token punctuation">.</span><span class="token function">reset</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>With the endpoint configuration above, axios requests will return an object for the endpoint instead of a collection:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code><span class="token comment">// get profile</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/profile'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+{
+  username: 'admin',
+  last_seen: '2020-03-16T4:24:38.680Z',
+}
+*/</span>
+
+<span class="token comment">// update profile</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span><span class="token string">'/profile'</span><span class="token punctuation">,</span> <span class="token punctuation">{</span> username<span class="token operator">:</span> <span class="token string">'foo'</span><span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+{
+  username: 'foo',
+  last_seen: '2020-03-16T4:24:38.680Z',
+}
+*/</span>
+
+<span class="token comment">// send delete request and check value</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">delete</span><span class="token punctuation">(</span><span class="token string">'/profile'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">await</span> axios<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token string">'/profile'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">/*
+{
+  username: 'admin',
+  last_seen: '2020-03-16T4:24:39.680Z',
+}
+*/</span>
+</code></pre></div><p>Additionally, you can see that mocking functions are always re-evaluated when new <code>GET</code> requests are made.</p> <h2 id="server-utilities"><a href="#server-utilities" class="header-anchor">#</a> Server Utilities</h2> <p>There are several utilities that can be used during testing. First, to reset a database between sessions, you can use the <code>server.reset()</code> function:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>jest<span class="token punctuation">.</span><span class="token function">mock</span><span class="token punctuation">(</span><span class="token string">'axios'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+server<span class="token punctuation">.</span><span class="token function">init</span><span class="token punctuation">(</span>axios<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">beforeEach</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  server<span class="token punctuation">.</span><span class="token function">reset</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>This will reset the database down to it's initial state (with data configured in the <code>data()</code> block). To clear the database completely during testing, use the <code>server.clear()</code> function:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>jest<span class="token punctuation">.</span><span class="token function">mock</span><span class="token punctuation">(</span><span class="token string">'axios'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+server<span class="token punctuation">.</span><span class="token function">init</span><span class="token punctuation">(</span>axios<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">beforeAll</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  server<span class="token punctuation">.</span><span class="token function">clear</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>Finally, to access the state of a database during or after testing, use the <code>server.dump()</code> property:</p> <div class="language-javascript extra-class"><pre class="language-javascript"><code>jest<span class="token punctuation">.</span><span class="token function">mock</span><span class="token punctuation">(</span><span class="token string">'axios'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+server<span class="token punctuation">.</span><span class="token function">init</span><span class="token punctuation">(</span>axios<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">afterAll</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span><span class="token string">'Printing Database!'</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+  console<span class="token punctuation">.</span><span class="token function">log</span><span class="token punctuation">(</span>server<span class="token punctuation">.</span><span class="token function">dump</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre></div><p>If you have any questions that aren't answered by this documentation, feel free to file a <code>documentation</code> issue in the <a href="https://github.com/bprinty/jest-axios" target="_blank" rel="noopener noreferrer">GitHub Issue Tracker<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> for this project.</p> <style>
+.badge {
+  display: inline-block;
+  font-size: 20px;
+  font-family: monospace;
+  height: 28px;
+  line-height: 28px;
+  border-radius: 3px;
+  padding: 0 6px;
+  color: #fff;
+  background-color: #42b983;
+}
+.scoped .badge,
+blockquote .badge {
+  font-size: 15px;
+  height: 23px;
+  line-height: 23px;
+}
+.badge.warning {
+  background-color: #e7c000;
+}
+.badge.error {
+  background-color: #da5961;
+}
+.badge.tip {
+  background-color: #42b983;
+}
+blockquote.scoped.warning {
+  border-color: #e7c000;
+}
+blockquote.scoped.error {
+  border-color: #da5961;
+}
+blockquote.scoped.tip {
+  border-color: #42b983;
+}
+
+</style></div> <footer class="page-edit"><div class="edit-link"><a href="https://github.com/bprinty/jest-axios/edit/master/docs/guide/README.md" target="_blank" rel="noopener noreferrer">Edit this page on GitHub</a> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></div> <div class="last-updated"><span class="prefix">Last Updated:</span> <span class="time">5/12/2020, 6:49:13 AM</span></div></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/jest-axios/setup/" class="prev">
+        Setup
+      </a></span> <span class="next"><a href="/jest-axios/api/">
+        API
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/jest-axios/assets/js/app.ab7e3225.js" defer></script><script src="/jest-axios/assets/js/2.3bc74574.js" defer></script><script src="/jest-axios/assets/js/7.170931b2.js" defer></script>
+  </body>
+</html>

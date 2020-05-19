@@ -254,6 +254,7 @@ export class Server {
     const model = options.model;
     return {
       get: () => _.omit(this.db[model].json(), exclude),
+      post: data => _.omit(this.db[model].update(data), exclude),
       put: data => _.omit(this.db[model].update(data), exclude),
       delete: () => this.db[model].reset(),
     };

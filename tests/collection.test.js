@@ -33,7 +33,33 @@ describe('collection', () => {
     ]);
   });
 
+  test('collection.put', async () => {
+
+    // single item
+    res = await axios.put('/posts', { id: 1, title: 'Test', body: 'test bar', author_id: 1 });
+    assert.equal(res.status, 200);
+    assert.deepEqual(res.data, {
+      id: 1,
+      title: 'Test',
+      body: 'test bar',
+      author_id: 1
+    });
+
+    // several items
+    res = await axios.put('/posts', [
+      { id: 1, title: 'Footest', body: 'foo bar test', author_id: 1 },
+      { id: 2, title: 'Bartest', body: 'bar baz test', author_id: 1 },
+    ]);
+    assert.equal(res.status, 200);
+    assert.deepEqual(res.data, [
+      { id: 1, title: 'Footest', body: 'foo bar test', author_id: 1 },
+      { id: 2, title: 'Bartest', body: 'bar baz test', author_id: 1 },
+    ]);
+  });
+
   test('collection.post', async () => {
+
+    // single item
     res = await axios.post('/posts', { title: 'Baz', body: 'baz baz', author_id: 2 });
     assert.equal(res.status, 201);
     assert.deepEqual(res.data, {
@@ -42,17 +68,17 @@ describe('collection', () => {
       body: 'baz baz',
       author_id: 2
     });
-  });
 
-  test('collection.post.multiple', async () => {
+    // several items
     res = await axios.post('/posts', [
-        { title: 'One', body: 'test' },
-        { title: 'Two', body: 'test' }
+      { title: 'One', body: 'test' },
+      { title: 'Two', body: 'test' }
     ]);
     assert.equal(res.status, 201);
     assert.deepEqual(res.data, [
-      { id: 3, title: 'One', body: 'test' },
-      { id: 4, title: 'Two', body: 'test' }
+      { id: 4, title: 'One', body: 'test' },
+      { id: 5, title: 'Two', body: 'test' }
     ]);
+
   });
 });

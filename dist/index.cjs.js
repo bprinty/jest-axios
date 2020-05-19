@@ -17569,24 +17569,24 @@ class Server {
         return process(data);
       },
       put: (data, id) => {
-        if (!(id && relation && key && lodash.isArray(data))) {
-          return undefined;
-        }
-
-        this.db[model].all().forEach(item => {
-          if (item[key] === id) {
-            this.db[model].update(item.id, {
-              [key]: undefined
-            });
-          }
-        });
-
         const process = item => {
-          item[key] = id;
-          return lodash.omit(this.db[model].update(item.id, item), exclude);
+          if (id && relation && key) {
+            item[key] = id;
+          }
+
+          if ('id' in item) {
+            return lodash.omit(this.db[model].update(item.id, item), exclude);
+          } else {
+            // eslint-disable-line
+            return lodash.omit(this.db[model].add(item), exclude);
+          }
         };
 
-        return data.map(item => process(item));
+        if (lodash.isArray(data)) {
+          return data.map(item => process(item));
+        }
+
+        return process(data);
       }
     };
   }

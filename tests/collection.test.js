@@ -81,4 +81,22 @@ describe('collection', () => {
     ]);
 
   });
+
+  test('collection.delete', async () => {
+
+    // single item
+    res = await axios.delete('/posts', { id: 1, title: 'Test', body: 'test bar', author_id: 1 });
+    assert.equal(res.status, 204);
+    res = await axios.get('/posts');
+    assert.equal(res.data.length, 1);
+
+    // several items
+    res = await axios.delete('/posts', [
+      { id: 2, title: 'Bar', body: 'bar baz test', author_id: 1 },
+    ]);
+    assert.equal(res.status, 204);
+    res = await axios.get('/posts');
+    assert.equal(res.data.length, 0);
+  });
+
 });
